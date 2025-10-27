@@ -1,8 +1,9 @@
-// Written by Daniel Harrington
-// Created: 27/10/2025
+// Created 27/10/2025
 
 #include "../include/arena.h"
+#include "../include/drawing.h"
 #include "../include/robot.h"
+
 
 int main(void)
 {

@@ -1,7 +1,7 @@
-// Written by Daniel Harrington
-// This program represents the robot, allowing it to move and have a memory
+// This file contains code to allow the robot to move and the algorithm for it to follow
 
+#include "../include/arena.h"
+#include "../include/drawing.h"
 #include "../include/robot.h"
-#include "../lib/graphics.h"
 
-#include <stdbool.h>
+#include "../lib/graphics.h"

@@ -39,7 +39,7 @@ COMP0002-C-Coursework/
 └── drawapp-4.5.jar
 ```
 
-🧱 Compilation
+## 🧱 Compilation
 
 From the main coursework directory, run:
 ```bash

@@ -1,6 +1,6 @@
-// Written by Daniel Harrington
-// The purpose of this program is to draw the map
+// This file defines how the arena works
 
 #include "../include/arena.h"
-#include "../lib/graphics.h"
+#include "../include/drawing.h"
 
+#include "../lib/graphics.h"
