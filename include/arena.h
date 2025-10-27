@@ -2,9 +2,10 @@
 #define ARENA_H
 
 typedef enum {
-    EMPTY = 0,
-    OBSTACLE = 1,
-    MARKER = 2
+    TILE_EMPTY = 0,
+    TILE_OBSTACLE = 1,
+    TILE_MARKER = 2,
+    TILE_ROBOT_START = 3
 } ArenaTile;
 
 typedef struct {

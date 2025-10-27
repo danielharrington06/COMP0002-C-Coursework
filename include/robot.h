@@ -11,9 +11,9 @@ typedef enum {
 } Direction;
 
 typedef enum {
-    UNKNOWN = 0,
-    VISITED = 1,
-    OBSTACLE = 2
+    ROBOT_UNKNOWN = 0,
+    ROBOT_VISITED = 1,
+    ROBOT_BLOCKED = 2
 } RobotTile;
 
 typedef struct {
@@ -27,10 +27,10 @@ typedef struct {
 } Robot;
 
 void forward(Robot*);
-void left(Robot*);
-void right(Robot*);
-int is_at_marker(Robot*);
-int can_move_forward(Robot*);
+void anticlockwise_turn(Robot*);
+void clockwise_turn(Robot*);
+int is_at_marker(Robot*, Arena*);
+int can_move_forward(Robot*, Arena*);
 void pickup_marker(Robot*);
 void drop_marker(Robot*);
 int get_marker_carry_count(Robot*);

@@ -68,4 +68,18 @@ Example:
 
 ## 🗺️ Map Coordinate System Explanation
 
-!! explain how the coordinate system is indexes
+The map (arena) uses a zero-indexed coordinate system, where the top-left corner of the arena is (0, 0) and the bottom-right corner is (arenaWidth - 1, arenaHeight - 1).
+
+The x-coordinate increases from left to right.
+
+The y-coordinate increases from top to bottom.
+
+Each tile in the arena grid can therefore be uniquely identified by its (x, y) coordinates within these bounds.
+
+For example, in an arena of size 10 × 8,
+
+The top-left tile is (0, 0)
+
+The bottom-right tile is (9, 7)
+
+This coordinate system is consistent throughout the program for both the arena and the robot’s internal memory map, ensuring that positional logic and drawing functions align correctly.
