@@ -1,8 +1,8 @@
 // Written by Daniel Harrington
 // Created: 27/10/2025
 
-#include "arena.h"
-#include "robot.h"
+#include "../include/arena.h"
+#include "../include/robot.h"
 
 int main(void)
 {
