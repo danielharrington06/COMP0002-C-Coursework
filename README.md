@@ -1,1 +1,1 @@
-# COMP0001 C Coursework
+# COMP0002 C Coursework
