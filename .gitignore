@@ -37,3 +37,8 @@
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# drawapp files to be ignored
+graphics.c
+graphics.h
+drawapp-4.5.jar
