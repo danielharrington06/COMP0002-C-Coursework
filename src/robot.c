@@ -5,8 +5,3 @@
 #include "../lib/graphics.h"
 
 #include <stdbool.h>
-
-typedef struct Robot
-{
-    
-} Robot
