@@ -31,8 +31,8 @@ void anticlockwise_turn(Robot*);
 void clockwise_turn(Robot*);
 int is_at_marker(Robot*, Arena*);
 int can_move_forward(Robot*, Arena*);
-void pickup_marker(Robot*);
-void drop_marker(Robot*);
+void pickup_marker(Robot*, Arena*);
+void drop_marker(Robot*, Arena*);
 int get_marker_carry_count(Robot*);
 int get_marker_arena_count(Arena*);
 
