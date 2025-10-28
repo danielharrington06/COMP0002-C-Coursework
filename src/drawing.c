@@ -5,6 +5,10 @@
 
 #include "../lib/graphics.h"
 
+#include <malloc.h>
+
+#define PI 3.141592653
+
 const int TILE_SIZE = 40;
 const int GRIDLINE_WIDTH = 2;
 const int BORDER_THICKNESS = 8;
@@ -82,4 +86,44 @@ void draw_obstacles(Arena *arena)
             }
         }
     }
+}
+
+// this function returns a pointer to an array of Points representing the vertices of an equilateral triangle with its base at the bottom
+Point* equ_triangle_coords(double triangle_circumrad)
+{
+    // a triangle's circumradius is the distance from the center to any vertex
+
+    Point *vertices = malloc(3 * sizeof(Point));
+    if (vertices == NULL) {
+        return NULL;
+    }
+
+    vertices[0].x = 0;
+    vertices[0].y = triangle_circumrad;
+    vertices[1].x = triangle_circumrad*cos(PI/3);
+    vertices[1].y = triangle_circumrad*sin(PI/3);
+    vertices[2].x = triangle_circumrad*cos(2*PI/3);
+    vertices[2].y = triangle_circumrad*sin(2*PI/3);
+}
+
+// this function draws the robot at its current arenaGrid position and direction
+void draw_robot(Robot *robot) 
+{
+    /* 
+    general idea here is to define the coordinates needed if the robot 
+    was drawn on mathetmatical coordinate axes with its center at (0, 0)
+     
+    this can then be flipped vertically and translated to the correct position
+    */
+
+    // triangle radius is the distance from center to vertice
+    double triangle_circumrad = TILE_SIZE/2 - BORDER_THICKNESS;
+
+    Point* vertices = equ_triangle_coords(triangle_circumrad);
+    if (vertices == NULL) {
+        printf("Malloc returned null in equ_triangle_coords\n");
+        return;
+    }
+
+    free(vertices);
 }

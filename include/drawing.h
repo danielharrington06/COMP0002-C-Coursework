@@ -5,8 +5,8 @@
 #include "robot.h"
 
 typedef struct {
-    int x;
-    int y;
+    double x;
+    double y;
 } Point;
 
 // calculate drawing dimensions
@@ -20,12 +20,12 @@ void draw_grid(Arena*);
 void draw_obstacle(int, int);
 void draw_obstcles(Arena*);
 
-// foreground drawing function
+// foreground drawing functions
 void draw_robot(Robot*);
 void draw_markers(Arena**);
 void draw_marker(int, int);
 
-// used to translate from arena coord to drawapp coord
-Point* get_draw_coord_from_arena_coord(int, int);
+// general drawing functions
+Point* equ_triangle_coords(double);
 
 #endif
