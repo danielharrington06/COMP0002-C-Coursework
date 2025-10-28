@@ -9,6 +9,11 @@ typedef struct {
     int y;
 } Point;
 
+// calculate drawing dimensions
+void calculate_window_dimensions(Arena*);
+int caculate_max_window_width(Arena*);
+int calculate_max_window_height(Arena*);
+
 // background drawing functions
 void draw_border(Arena*);
 void draw_grid(Arena*);
