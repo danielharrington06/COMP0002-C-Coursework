@@ -11,14 +11,14 @@ typedef struct {
 
 // calculate drawing dimensions
 void calculate_window_dimensions(Arena*);
-int caculate_max_window_width(Arena*);
-int calculate_max_window_height(Arena*);
+int caculate_max_window_width();
+int calculate_max_window_height();
 
 // background drawing functions
 void draw_border(Arena*);
 void draw_grid(Arena*);
-void draw_obstcles(Arena*);
 void draw_obstacle(int, int);
+void draw_obstcles(Arena*);
 
 // foreground drawing function
 void draw_robot(Robot*);

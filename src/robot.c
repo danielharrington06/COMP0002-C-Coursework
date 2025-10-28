@@ -6,8 +6,7 @@
 
 #include "../lib/graphics.h"
 
-// this function causes the robot to move forward in current direction
-// pre-requisite is that can_move_forward is true
+// this function causes the robot to move forward in current direction; pre-requisite: can_move_forward is true
 void forward(Robot *robot) 
 {
     switch(robot->direction) {
@@ -69,8 +68,7 @@ int can_move_forward(Robot *robot, Arena *arena)
     return !(arena->arenaGrid[x][y] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
 }
 
-// this function removes a marker from the arena and adds it to the robot's collection
-// pre-requisite is that is_at_marker() is true
+// this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
 void pickup_marker(Robot *robot, Arena *arena) 
 {
     arena->arenaGrid[robot->x][robot->y] = TILE_EMPTY;
@@ -78,8 +76,7 @@ void pickup_marker(Robot *robot, Arena *arena)
     robot->markerCount++;
 }
 
-// this function drops a marker onto the grid
-// pre-requesite is that is_at_marker() is false
+// this function drops a marker onto the grid; pre-requesite: is_at_marker() is false
 void drop_marker(Robot *robot, Arena *arena) 
 {
     robot->markerCount--;

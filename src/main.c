@@ -4,6 +4,7 @@
 #include "../include/drawing.h"
 #include "../include/robot.h"
 
+#include "../lib/graphics.h"
 
 int main(void)
 {
