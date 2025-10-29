@@ -13,6 +13,14 @@ int random_coord(int width_height)
     return rand() % width_height;
 }
 
+// this function finds the min of two integers
+int min(int a, int b) 
+{
+    if (a < b) return a;
+    return b;
+}
+
+// this function determines if the tile relative to (x, y) in direction direction is empty
 int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
 {
     switch(direction) {
@@ -74,6 +82,7 @@ void generate_obstacles_clustered(Arena *arena, int numClusters)
 
         arena->arenaGrid[x][y] = TILE_OBSTACLE;
 
+        // spawn the others in the cluster
         int placed = 0; // keep track of how many have been placed
         int dir = (int)random_direction(); // get random direction to start at
         for (int i = 0; i < 4; i++) {
@@ -82,6 +91,36 @@ void generate_obstacles_clustered(Arena *arena, int numClusters)
                 placed++;
             }
             if (placed == 2) break; // clusters of up to 3
+        }
+    }
+}
+
+// this function generates a vertical wall from the bottom of the screen to near the top with a length specified; pre-requisite: arenaGrid is completely empty
+void generate_obstacles_wall(Arena* arena, int numObstacles)
+{
+    assert(numObstacles < arena->arenaHeight);
+
+    int x = arena->arenaWidth/3;
+
+    for (int i = 0; i < numObstacles; i++) {
+        arena->arenaGrid[x][arena->arenaHeight - 1 - i] = TILE_OBSTACLE;
+    }
+}
+
+// this function creates a cavern by finding a central arenaGrid coordinate and determines whether each coordinate is within a set radius; pre-requisite: arenaGrid is completely empty
+void generate_obstacles_cavern(Arena *arena)
+{
+    // define radius and centre of the cavern
+    int radius = min(arena->arenaWidth, arena->arenaHeight)/2 - 1;
+    int centreX = (arena->arenaWidth-1)/2;
+    int centreY = (arena->arenaHeight-1)/2;
+
+    for (int x = 0; x < arena->arenaWidth; x++) {
+        for (int y = 0; y < arena->arenaHeight; y++) {
+            int distToCentre = pow(centreX-x, 2) + pow(centreY-y, 2);
+            if (distToCentre > radius) {
+                arena->arenaGrid[x][y] = TILE_OBSTACLE;
+            }
         }
     }
 }

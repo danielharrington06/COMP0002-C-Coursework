@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-// this function causes the robot to move forward in current direction; pre-requisite: can_move_forward is true
+// this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
 void forward(Robot *robot) 
 {
     switch(robot->direction) {
