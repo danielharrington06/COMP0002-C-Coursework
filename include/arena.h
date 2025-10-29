@@ -23,6 +23,13 @@ typedef enum {
     CENTRAL_CAVERN = 3
 } ObstacleFormation;
 
+// functions to generate obstacles and markers
+int random_coord(int);
+int is_tile_in_direction_free(Arena*, int, int, Direction);
+void generate_obstacles_random(Arena*, int);
+void generate_obstacles_clustered(Arena*, int);
+void generate_obstacles_wall(Arena*, int);
+void generate_obstacles_cavern(Arena*);
 void generate_obstacles(Arena*, int, ObstacleFormation);
 void generate_markers(Arena*, int);
 

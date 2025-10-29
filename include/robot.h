@@ -36,4 +36,6 @@ void drop_marker(Robot*, Arena*);
 int get_marker_carry_count(Robot*);
 int get_marker_arena_count(Arena*);
 
+Direction random_direction();
+
 #endif

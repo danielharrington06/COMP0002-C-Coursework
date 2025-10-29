@@ -6,6 +6,8 @@
 
 #include "../lib/graphics.h"
 
+#include <stdlib.h>
+
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward is true
 void forward(Robot *robot) 
 {
@@ -95,3 +97,10 @@ int get_marker_arena_count(Arena *arena)
 {
     return arena->numMarker;
 }
+
+//  this function generates a random Direction from robot.c to use to generate a cluster
+Direction random_direction()
+{
+    return (Direction)(rand() % 4);
+}
+
