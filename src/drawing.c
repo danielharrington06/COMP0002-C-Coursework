@@ -6,6 +6,7 @@
 #include "../lib/graphics.h"
 
 #include <malloc.h>
+#include <math.h>
 
 #define PI 3.141592653
 
@@ -64,8 +65,8 @@ void draw_grid(Arena *arena)
 }
 
 // this function draws a single obstacle at arena position (x, y)
-void draw_obstacle(int x, int y) {
-
+void draw_obstacle(int x, int y) 
+{
     // convert arena position (x, y) to coordinates for top left of shape
     int coordX = BORDER_THICKNESS + x*TILE_SIZE + OBJECT_PADDING;
     int coordY = BORDER_THICKNESS + y*TILE_SIZE + OBJECT_PADDING;
@@ -73,7 +74,7 @@ void draw_obstacle(int x, int y) {
 
     // draw
     setColour(black);
-    fillRect(coordX, coordY, obstacle_size, TILE_SIZE-2*OBJECT_PADDING);
+    fillRect(coordX, coordY, obstacle_size, obstacle_size);
 }
 
 // this function iterates over arenaGrid and calls the function to render obstacles
@@ -106,6 +107,31 @@ Point* equ_triangle_coords(double triangle_circumrad)
     vertices[2].y = triangle_circumrad*sin(2*PI/3);
 }
 
+// this function rotates a single point around the origin
+void rotate_point(Point *point, int degrees) 
+{
+    double radians = ((double)degrees) * PI / 180.0;
+
+    /* uses a matrix rotation 
+    (x)(cos(a) -sin(a)) _ (xcos(a) + ysin(a))
+    (y)(sin(a) cos(a))) ‾ (-xsin(a) + ycos(a))
+    */
+    
+    double newX = point->x*cos(radians) - point->y*sin(radians);
+    double newY = point->x*sin(radians) + point->y*cos(radians);
+
+    point->x = newX;
+    point->y = newY;
+}
+
+// this function rotates points around origin and returns them in place
+void rotate_points(Point* vertices, int numV, int degrees) 
+{
+    for (int i = 0; i < numV; i++) {
+        rotate_point(&vertices[i], degrees);
+    }
+}
+
 // this function draws the robot at its current arenaGrid position and direction
 void draw_robot(Robot *robot) 
 {
@@ -125,5 +151,32 @@ void draw_robot(Robot *robot)
         return;
     }
 
+    rotate_points(vertices, 3, robot->direction*90);
+
     free(vertices);
+}
+
+// this function draws a single marker at arena position (x, y)
+void draw_marker(int x, int y) 
+{
+    // convert arena position (x, y) to coordinates for top left of shape
+    int coordX = BORDER_THICKNESS + x*TILE_SIZE + OBJECT_PADDING;
+    int coordY = BORDER_THICKNESS + y*TILE_SIZE + OBJECT_PADDING;
+    int obstacle_size = TILE_SIZE-2*OBJECT_PADDING;
+
+    // draw
+    setColour(gray);
+    fillRect(coordX, coordY, obstacle_size, obstacle_size);
+}
+
+// this function iterates over arenaGrid and calls the function to render markers
+void draw_markers(Arena *arena)
+{
+    for (int i = 0; i < arena->arenaWidth; i++) {
+        for (int j = 0; j < arena->arenaHeight; i++) {
+            if (arena->arenaGrid[i][j] == TILE_MARKER) {
+                draw_marker(i, j);
+            }
+        }
+    }
 }

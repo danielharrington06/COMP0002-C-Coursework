@@ -20,12 +20,14 @@ void draw_grid(Arena*);
 void draw_obstacle(int, int);
 void draw_obstcles(Arena*);
 
-// foreground drawing functions
-void draw_robot(Robot*);
-void draw_markers(Arena**);
-void draw_marker(int, int);
-
 // general drawing functions
 Point* equ_triangle_coords(double);
+void rotate_point(Point*, int);
+void rotate_points(Point*, int, int);
+
+// foreground drawing functions
+void draw_robot(Robot*);
+void draw_marker(int, int);
+void draw_markers(Arena*);
 
 #endif
