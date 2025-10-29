@@ -24,6 +24,7 @@ void draw_obstcles(Arena*);
 Point* equ_triangle_coords(double);
 void rotate_point(Point*, int);
 void rotate_points(Point*, int, int);
+void draw_triangle(Point*, int, int);
 
 // foreground drawing functions
 void draw_robot(Robot*);

@@ -93,7 +93,6 @@ void draw_obstacles(Arena *arena)
 Point* equ_triangle_coords(double triangle_circumrad)
 {
     // a triangle's circumradius is the distance from the center to any vertex
-
     Point *vertices = malloc(3 * sizeof(Point));
     if (vertices == NULL) {
         return NULL;
@@ -134,6 +133,26 @@ void rotate_points(Point* vertices, int numV, int degrees)
     }
 }
 
+// this function draws a triangle on a specific arenaGrid tile
+void draw_triangle(Point* vertices, int x, int y)
+{
+    int numVertices = 3;
+
+    // convert from arenaGrid x,y to coordinate x, y
+    int offsetX = BORDER_THICKNESS + x*TILE_SIZE + 0.5*TILE_SIZE;
+    int offsetY = BORDER_THICKNESS + y*TILE_SIZE + 0.5*TILE_SIZE;
+
+    // place in array so they are accepted by fillPolygon
+    int xCoords[] = {vertices[0].x, vertices[1].x, vertices[2].x};
+    int yCoords[] = {vertices[0].y, vertices[1].y, vertices[2].y};
+
+    // iterate over xCoords then yCoords to offset them to the right position
+    for (int i = 0; i < numVertices; i++) { xCoords[i] += offsetX; }
+    for (int i = 0; i < numVertices; i++) { yCoords[i] += offsetY; }
+
+    fillPolygon(numVertices, xCoords, yCoords);
+}
+
 // this function draws the robot at its current arenaGrid position and direction
 void draw_robot(Robot *robot) 
 {
@@ -147,13 +166,18 @@ void draw_robot(Robot *robot)
     // triangle radius is the distance from center to vertice
     double triangle_circumrad = TILE_SIZE/2 - BORDER_THICKNESS;
 
+    // generate vertices
     Point* vertices = equ_triangle_coords(triangle_circumrad);
     if (vertices == NULL) {
         printf("Malloc returned null in equ_triangle_coords\n");
         return;
     }
 
+    // rotate to match robot's direction
     rotate_points(vertices, 3, robot->direction*90);
+
+    // take into account offset necessary and draw the triangle
+    draw_triangle(vertices, robot->x, robot->y);
 
     free(vertices);
 }
