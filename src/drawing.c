@@ -44,7 +44,7 @@ int calculate_max_arena_height()
 void draw_border(Arena *arena) 
 {
     setColour(red);
-    filRect(0, 0, arena->arenaWidth, arena->arenaHeight);
+    fillRect(0, 0, arena->arenaWidth, arena->arenaHeight);
     setColour(white);
     fillRect(BORDER_THICKNESS, BORDER_THICKNESS, arena->arenaWidth-2*BORDER_THICKNESS, arena->arenaHeight-2*BORDER_THICKNESS);
 }
@@ -105,6 +105,8 @@ Point* equ_triangle_coords(double triangle_circumrad)
     vertices[1].y = triangle_circumrad*sin(PI/3);
     vertices[2].x = triangle_circumrad*cos(2*PI/3);
     vertices[2].y = triangle_circumrad*sin(2*PI/3);
+
+    return vertices;
 }
 
 // this function rotates a single point around the origin

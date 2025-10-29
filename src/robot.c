@@ -25,13 +25,13 @@ void forward(Robot *robot)
 }
 
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
-void anticlockwise_turn(Robot *robot) 
+void turn_left(Robot *robot) 
 {
     robot->direction = robot->direction + 3 % 4;
 }
 
 // this function rotates the robot 90 degrees clockwise (right 90 degree turn)
-void clockwise_turn(Robot *robot) 
+void turn_right(Robot *robot) 
 {
     robot->direction = robot->direction + 1 % 4;
 }

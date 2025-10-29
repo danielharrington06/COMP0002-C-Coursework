@@ -2,14 +2,14 @@
 
 ## 📘 Description
 
-This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h`, and `drawapp-4.5.jar`).
+This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h` and `drawapp-4.5.jar`).
 
-The program displays a tile-based arena surrounded by walls, with markers and obstacles placed at random positions.
+The program displays a tile-based arena with markers and obstacles placed at random positions.
 
 A robot, represented by a triangle, moves around the arena following a control algorithm. It can:
-- Move forward, turn left/right, and detect walls or obstacles.
-- Detect and pick up markers.
-- Drop markers at specific locations (e.g. a corner).
+- Move forward, rotate left/right, and detect walls or obstacles
+- Detect and pick up markers
+- Drop markers at specific locations (e.g. a corner)
 
 The arena and obstacles are drawn on the background layer once, while the robot is animated on the foreground layer, giving the effect of movement without redrawing the background.
 
@@ -41,7 +41,7 @@ COMP0002-C-Coursework/
 
 From the main coursework directory, run:
 ```bash
-gcc -Wall -Werror src/*.c lib/graphics.c -Iinclude -o robot-prog.out
+gcc -Wall -Werror src/*.c lib/graphics.c -Iinclude -o robot-prog.out -lm
 ```
 
 ## ▶️ Running the Program
@@ -67,10 +67,10 @@ Example:
 ## 🗺️ Map Coordinate System Explanation
 
 The program uses a **zero-indexed coordinate system** for both the arena and the robot’s internal map.
-- The top-left corner of the arena is at `(0, 0)`.
-- The bottom-right corner is at `(arenaWidth - 1, arenaHeight - 1)`.
-- The x-coordinate increases from left → right.
-- The y-coordinate increases from top → bottom.
+- The top-left corner of the arena is at `(0, 0)`
+- The bottom-right corner is at `(arenaWidth - 1, arenaHeight - 1)`
+- The x-coordinate increases from left → right
+- The y-coordinate increases from top → bottom
 
 Each tile in the arena grid is uniquely identified by its `(x, y)` coordinates within these bounds.
 

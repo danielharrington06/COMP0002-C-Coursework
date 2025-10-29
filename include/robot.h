@@ -27,8 +27,8 @@ typedef struct {
 } Robot;
 
 void forward(Robot*);
-void anticlockwise_turn(Robot*);
-void clockwise_turn(Robot*);
+void turn_left(Robot*);
+void turn_right(Robot*);
 int is_at_marker(Robot*, Arena*);
 int can_move_forward(Robot*, Arena*);
 void pickup_marker(Robot*, Arena*);

@@ -23,7 +23,7 @@ typedef enum {
     CENTRAL_CAVERN = 3
 } ObstacleFormation;
 
-void generate_random_obstacles(Arena*, int, ObstacleFormation);
+void generate_obstacles(Arena*, int, ObstacleFormation);
 void generate_markers(Arena*, int);
 
 #endif
