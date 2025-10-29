@@ -4,13 +4,6 @@
 #include "arena.h"
 
 typedef enum {
-    NORTH = 0,
-    EAST = 1,
-    SOUTH = 2,
-    WEST = 3
-} Direction;
-
-typedef enum {
     ROBOT_UNKNOWN = 0,
     ROBOT_VISITED = 1,
     ROBOT_BLOCKED = 2

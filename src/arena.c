@@ -1,11 +1,15 @@
 // This file defines how the arena works
 
 #include "../include/arena.h"
+#include "../include/robot.h"
 #include "../include/drawing.h"
 
 #include "../lib/graphics.h"
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <math.h>
 
 // this function generates a random coordinate from 0 to width_height which represents either the width or height of the grid
 int random_coord(int width_height)
@@ -125,25 +129,91 @@ void generate_obstacles_cavern(Arena *arena)
     }
 }
 
-// this function determines which function to use to generate obstacles and then calls them
+// this function determines which function to use to generate obstacles and then calls it; pass numObstacles = 0 if not needed
 void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation formation)
 {
     switch(formation) {
-        case RANDOM:
+        case O_NONE:
+            break;
+        case O_RANDOM:
             generate_obstacles_random(arena, numObstacles);
             break;
-        case CLUSTERED_RANDOM:
+        case O_CLUSTERED:
             generate_obstacles_clustered(arena, numObstacles);
             break;
-        case SINGLE_WALL:
+        case O_SINGLE_WALL:
             generate_obstacles_wall(arena, numObstacles);
             break;
-        case CENTRAL_CAVERN:
+        case O_CENTRAL_CAVERN:
             generate_obstacles_cavern(arena);
             break;
         default:
             printf("Formation was not a valid selection\n");
             assert(0); // crash the code
+            break;
+    }
+}
+
+// this function generates a single marker somewhere along the edge of the grid; pre-requisite: no obstacles placed
+void generate_marker_edge(Arena *arena)
+{
+    // randomly choose a number from 0 to 4 to represent top, right, bottom or left
+    // when thinking clockwise, the first tile is part of that row
+    int r = rand() % 4;
+
+    // deal with vertical then horizontal
+    if (r % 2 == 0) {
+        int pos = rand() % arena->arenaWidth - 1;
+        if (r == 0) arena->arenaGrid[pos][0] = TILE_MARKER;
+        if (r == 2) arena->arenaGrid[pos+1][arena->arenaHeight-1] = TILE_MARKER;
+    }
+    else {
+        int pos = rand() % arena->arenaHeight - 1;
+        if (r == 1) arena->arenaGrid[arena->arenaWidth-1][pos] = TILE_MARKER;
+        if (r == 3) arena->arenaGrid[0][pos+1] = TILE_MARKER;
+    }
+}
+
+void generate_marker_anywhere(Arena *arena)
+{
+    int x = rand() % arena->arenaWidth;
+    int y = rand() % arena->arenaHeight;
+
+    arena->arenaGrid[x][y] = TILE_MARKER;
+}
+
+// this function generates markers randomly; pre-requesite: obstacles have already been spawned
+void generate_markers_random(Arena *arena, int numMarkers)
+{
+    // theoretically could become an infinite loop, but in reality unlikely to
+    for (int i = 0; i < numMarkers; i++) {
+        // generate (x, y) until (x, y) is an empty tile
+        int x, y;
+        do {
+            x = random_coord(arena->arenaWidth);
+            y = random_coord(arena->arenaHeight);
+        } while (arena->arenaGrid[x][y] != TILE_EMPTY);
+
+        arena->arenaGrid[x][y] = TILE_MARKER;
+    }
+}
+
+// this function determines which function to use to generate markers and then calls it; pass numMarkers = 0 if not needed
+void generate_markers(Arena *arena, int numMarkers, MarkerFormation formation)
+{
+    switch(formation) {
+        case M_EDGE:
+            generate_marker_edge(arena);
+            break;
+        case M_ANYWHERE:
+            generate_marker_anywhere(arena);
+            break;
+        case M_RANDOM:
+            generate_markers_random(arena, numMarkers);
+            break;
+        default:
+            printf("Formation was not a valid selection\n");
+            assert(0);
             break;
     }
 }
