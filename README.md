@@ -69,8 +69,8 @@ Example:
 The program uses a **zero-indexed coordinate system** for both the arena and the robot’s internal map.
 - The top-left corner of the arena is at `(0, 0)`
 - The bottom-right corner is at `(arenaWidth - 1, arenaHeight - 1)`
-- The x-coordinate increases from left → right
-- The y-coordinate increases from top → bottom
+- The x-coordinate increases from left to right
+- The y-coordinate increases from top to bottom
 
 Each tile in the arena grid is uniquely identified by its `(x, y)` coordinates within these bounds.
 
