@@ -21,14 +21,16 @@ COMP0002-C-Coursework/
 │
 ├── src/
 │   ├── main.c
-│   ├── robot.c
 │   ├── arena.c
-│   └── drawing.c
+│   ├── drawing.c
+│   ├── robot.c
+│   └── utils.c
 │
 ├── include/
-│   ├── robot.h
 │   ├── arena.h
-│   └── drawing.h
+│   ├── drawing.h
+│   ├── robot.h
+│   └── utils.h
 │
 ├── lib/
 │   ├── graphics.c
@@ -59,6 +61,10 @@ Example:
 ```bash
 ./robot-prog.out 3 4 east | java -jar drawapp-4.5.jar
 ```
+
+If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.
+
+If the directino is invalid, a random direction will be chosen, but the position kept.
 
 ## 📁 Program Structure Overview
 
