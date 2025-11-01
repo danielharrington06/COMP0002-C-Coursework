@@ -14,11 +14,12 @@ typedef struct {
     int y;
     Direction direction;
     int markerCount;
-    int mapWidth;
-    int mapHeight;  
+    int arenaWidth;
+    int arenaHeight;  
     RobotTile **memory;
 } Robot;
 
+// robot movement/controls that are pieced together by an algorithm
 void forward(Robot*);
 void turn_left(Robot*);
 void turn_right(Robot*);
@@ -29,6 +30,17 @@ void drop_marker(Robot*, Arena*);
 int get_marker_carry_count(Robot*);
 int get_marker_arena_count(Arena*);
 
+// functions to setup robot
+void allocate_robots_memory(Robot*);
+Robot* create_robot(Arena*);
+void free_robots_memory(Robot*);
+void free_robot(Robot*);
+void place_robot_random(Robot*, Arena*);
+void place_robot_specific(Robot*, Arena*, int, int, Direction);
+Direction parse_direction(const char*);
+void place_robot(int, char**, Robot*, Arena*);
+
+// called from within and from arena.c
 Direction random_direction();
 
 #endif

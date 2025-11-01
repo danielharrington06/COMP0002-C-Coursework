@@ -9,10 +9,9 @@ typedef struct {
     double y;
 } Point;
 
-// calculate drawing dimensions
-void calculate_window_dimensions(Arena*);
-int caculate_max_window_width();
-int calculate_max_window_height();
+// calculate max arena dimensions
+int caculate_max_arena_width();
+int calculate_max_arena_height();
 
 // background drawing functions
 void draw_border(Arena*);
@@ -30,5 +29,10 @@ void draw_triangle(Point*, int, int);
 void draw_robot(Robot*);
 void draw_marker(int, int);
 void draw_markers(Arena*);
+
+// functions called from main
+void calculate_window_dimensions(Arena*);
+void draw_background(Arena*);
+void draw_foreground(Arena*, Robot*);
 
 #endif

@@ -37,6 +37,10 @@ typedef enum {
     M_RANDOM = 2
 } MarkerFormation;
 
+// util functions
+random_coord(int);
+min(int, int);
+
 // functions to generate obstacles and markers
 int is_tile_in_direction_free(Arena*, int, int, Direction);
 void generate_obstacles_random(Arena*, int);
