@@ -1,8 +1,9 @@
 // This file defines how the arena works
 
 #include "../include/arena.h"
-#include "../include/robot.h"
 #include "../include/drawing.h"
+#include "../include/robot.h"
+#include "../include/utils.h"
 
 #include "../lib/graphics.h"
 
@@ -10,19 +11,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
-
-// this function generates a random coordinate from 0 to width_height which represents either the width or height of the grid
-int static random_coord(int width_height)
-{
-    return rand() % width_height;
-}
-
-// this function finds the min of two integers
-int min(int a, int b) 
-{
-    if (a < b) return a;
-    return b;
-}
 
 // this function determines if the tile relative to (x, y) in direction direction is empty
 static int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
@@ -204,16 +192,88 @@ void generate_markers(Arena *arena, int numMarkers, MarkerFormation formation)
     switch(formation) {
         case M_EDGE:
             generate_marker_edge(arena);
+            arena->numMarker = 1;
             break;
         case M_ANYWHERE:
             generate_marker_anywhere(arena);
+            arena->numMarker = 1;
             break;
         case M_RANDOM:
             generate_markers_random(arena, numMarkers);
+            arena->numMarker = numMarkers;
             break;
         default:
             printf("Formation was not a valid selection\n");
             assert(0);
             break;
     }
+}
+
+// functions to deal with arena struct:
+
+// functions called from main:
+
+// this function allocates memory for robot's memory
+static void allocate_arena_grid(Arena *arena)
+{
+    // get width and height for ease
+    int width = arena->arenaWidth;
+    int height = arena->arenaHeight;
+
+    // allocate memory for row pointers
+    arena->arenaGrid = calloc(height, sizeof(ArenaTile*));
+    if (arena->arenaGrid == NULL) {
+        printf("Failed to allocate memory for arenaGrid row pointers\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // allocate each row
+    for (int i = 0; i < height; i++) {
+        arena->arenaGrid[i] = calloc(width, sizeof(ArenaTile));
+        if (arena->arenaGrid[i] == NULL) {
+            printf("Failed to allocate memory for a row in arenaGrid\n");
+            // free already allocated memory
+            for (int j = 0; j < i; j++) {
+                free(arena->arenaGrid[j]);
+            }
+            free(arena->arenaGrid);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+// this function creates an arena struct; pre-requisite: arena dimensions already set
+Arena* create_arena(int width, int height)
+{
+    // allocate memory
+    Arena* arena = malloc(sizeof(Arena));
+    if (arena == NULL) return NULL;
+
+    // this will be changed
+    arena->numMarker = 0;
+
+    // this is correct starting value
+    arena->arenaWidth = width;
+    arena->arenaHeight = height;
+
+    // allocate robot's memory
+    allocate_robots_memory(arena);
+
+    return arena;
+}
+
+// this function frees arenaGrid memory
+static void free_arena_grid(Arena *arena)
+{
+    for (int i = 0; i < arena->arenaHeight; i++) {
+        free(arena->arenaGrid[i]);
+    }
+    free(arena->arenaGrid);
+}
+
+// this function frees overall robot struct memory
+void free_robot(Arena *arena)
+{
+    free_robots_memory(arena);
+    free(arena);
 }

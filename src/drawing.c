@@ -21,6 +21,13 @@ const int MAX_WINDOW_HEIGHT = 800;
 int WINDOW_WIDTH = 0;
 int WINDOW_HEIGHT = 0;
 
+// this function calculates window dimensions (width and height); pre-requesite: arenaWidth and arenaHeight are less than their maximum values
+static void calculate_window_dimensions(Arena *arena) 
+{
+    WINDOW_WIDTH = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaWidth + (arena->arenaWidth+1)*GRIDLINE_WIDTH;
+    WINDOW_HEIGHT = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaHeight + (arena->arenaHeight+1)*GRIDLINE_WIDTH;
+}
+
 // this function calculates the maximum arenaWidth for the screen, taking into account tile size and display width
 int calculate_max_arena_width() 
 {
@@ -202,18 +209,12 @@ static void draw_markers(Arena *arena)
 
 // functions called from main here:
 
-// this function calculates window dimensions (width and height); pre-requesite: arenaWidth and arenaHeight are less than their maximum values
-void calculate_window_dimensions(Arena *arena) 
-{
-    WINDOW_WIDTH = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaWidth + (arena->arenaWidth+1)*GRIDLINE_WIDTH;
-    WINDOW_HEIGHT = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaHeight + (arena->arenaHeight+1)*GRIDLINE_WIDTH;
-}
-
 // this function draws the background - called once at start; pre-requisite: arena dimensions set, window dimensions set, obstacles generated
 void draw_background(Arena *arena)
 {
+    calculate_window_dimensions(arena);
     draw_border(arena);
-    draw_gird(arena);
+    draw_grid(arena);
     draw_obstacles(arena);
 }
 

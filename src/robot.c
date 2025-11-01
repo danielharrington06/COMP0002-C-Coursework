@@ -3,10 +3,13 @@
 #include "../include/arena.h"
 #include "../include/drawing.h"
 #include "../include/robot.h"
+#include "../include/utils.h"
 
 #include "../lib/graphics.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <malloc.h>
 
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
@@ -103,13 +106,7 @@ static int get_marker_arena_count(Arena *arena)
     return arena->numMarker;
 }
 
-//  this function generates a random Direction from robot.c to use to generate a cluster
-Direction random_direction()
-{
-    return (Direction)(rand() % 4);
-}
-
-// functions called from main:
+// functions to deal with robot struct:
 
 // this function allocates memory for robot's memory
 static void allocate_robots_memory(Robot *robot)
@@ -121,7 +118,7 @@ static void allocate_robots_memory(Robot *robot)
     // allocate memory for row pointers
     robot->memory = calloc(height, sizeof(RobotTile *));
     if (robot->memory == NULL) {
-        perror("Failed to allocate memory for row pointers");
+        printf("Failed to allocate memory for robot memory row pointers\n");
         exit(EXIT_FAILURE);
     }
 
@@ -129,7 +126,7 @@ static void allocate_robots_memory(Robot *robot)
     for (int i = 0; i < height; i++) {
         robot->memory[i] = calloc(width, sizeof(RobotTile));
         if (robot->memory[i] == NULL) {
-            perror("Failed to allocate memory for a row");
+            printf("Failed to allocate memory for a row in robot memory\n");
             // free already allocated memory
             for (int j = 0; j < i; j++) {
                 free(robot->memory[j]);
@@ -158,7 +155,9 @@ Robot* create_robot(Arena *arena)
     robot->arenaHeight = arena->arenaHeight;
 
     // allocate robot's memory
-    allocate_robots_memory(&robot);
+    allocate_robots_memory(robot);
+
+    return robot;
 }
 
 // this function frees robot memory's memory
@@ -173,7 +172,7 @@ static void free_robots_memory(Robot *robot)
 // this function frees overall robot struct memory
 void free_robot(Robot *robot)
 {
-    free_robot_memory(&robot);
+    free_robots_memory(robot);
     free(robot);
 }
 
@@ -202,7 +201,7 @@ static void place_robot_specific(Robot *robot, Arena *arena, int x, int y, Direc
 {
     // if the entered position is taken, place the robot randomly
     if (arena->arenaGrid[x][y] != TILE_EMPTY) {
-        place_robot_random(&robot, &arena);
+        place_robot_random(robot, arena);
         return;
     }
 
@@ -244,7 +243,7 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
         // check out of bounds - if so, give random position and direction
         if (x < 0 || y < 0 || x >= robot->arenaWidth || y >= robot->arenaHeight) {
                 printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
-                place_robot_random(&robot, &arena);
+                place_robot_random(robot, arena);
                 return;
         }
 
@@ -256,9 +255,9 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
         }
 
         // valid x, y, direction
-        place_robot_specific(&robot, &arena, x, y, direction);
+        place_robot_specific(robot, arena, x, y, direction);
         return;
     }
 
-    place_robot_random(&robot, &arena);
+    place_robot_random(robot, arena);
 }

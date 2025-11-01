@@ -1,12 +1,7 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-typedef enum {
-    NORTH = 0,
-    EAST = 1,
-    SOUTH = 2,
-    WEST = 3
-} Direction;
+#include "utils.h"
 
 typedef enum {
     TILE_EMPTY = 0,
@@ -37,20 +32,22 @@ typedef enum {
     M_RANDOM = 2
 } MarkerFormation;
 
-// util functions
-random_coord(int);
-min(int, int);
-
 // functions to generate obstacles and markers
 int is_tile_in_direction_free(Arena*, int, int, Direction);
-void generate_obstacles_random(Arena*, int);
-void generate_obstacles_clustered(Arena*, int);
-void generate_obstacles_wall(Arena*, int);
-void generate_obstacles_cavern(Arena*);
+static void generate_obstacles_random(Arena*, int);
+static void generate_obstacles_clustered(Arena*, int);
+static void generate_obstacles_wall(Arena*, int);
+static void generate_obstacles_cavern(Arena*);
 void generate_obstacles(Arena*, int, ObstacleFormation);
-void generate_marker_edge(Arena*);
-void generate_marker_anywhere(Arena*);
-void generate_markers_random(Arena*, int);
+static void generate_marker_edge(Arena*);
+static void generate_marker_anywhere(Arena*);
+static void generate_markers_random(Arena*, int);
 void generate_markers(Arena*, int, MarkerFormation);
+
+// functions dealing with arena struct
+static void allocate_arena_grid(Arena*);
+Arena* create_arena(int, int);
+static void free_arena_grid(Arena*);
+void free_arena(Arena*);
 
 #endif

@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include "arena.h"
+#include "utils.h"
 
 typedef enum {
     ROBOT_UNKNOWN = 0,
@@ -20,27 +21,24 @@ typedef struct {
 } Robot;
 
 // robot movement/controls that are pieced together by an algorithm
-void forward(Robot*);
-void turn_left(Robot*);
-void turn_right(Robot*);
-int is_at_marker(Robot*, Arena*);
-int can_move_forward(Robot*, Arena*);
-void pickup_marker(Robot*, Arena*);
-void drop_marker(Robot*, Arena*);
-int get_marker_carry_count(Robot*);
-int get_marker_arena_count(Arena*);
+static void forward(Robot*);
+static void turn_left(Robot*);
+static void turn_right(Robot*);
+static int is_at_marker(Robot*, Arena*);
+static int can_move_forward(Robot*, Arena*);
+static void pickup_marker(Robot*, Arena*);
+static void drop_marker(Robot*, Arena*);
+static int get_marker_carry_count(Robot*);
+static int get_marker_arena_count(Arena*);
 
-// functions to setup robot
-void allocate_robots_memory(Robot*);
+// functions dealing with robot struct
+static void allocate_robots_memory(Robot*);
 Robot* create_robot(Arena*);
-void free_robots_memory(Robot*);
+static void free_robots_memory(Robot*);
 void free_robot(Robot*);
-void place_robot_random(Robot*, Arena*);
-void place_robot_specific(Robot*, Arena*, int, int, Direction);
-Direction parse_direction(const char*);
+static void place_robot_random(Robot*, Arena*);
+static void place_robot_specific(Robot*, Arena*, int, int, Direction);
+static Direction parse_direction(const char*);
 void place_robot(int, char**, Robot*, Arena*);
-
-// called from within and from arena.c
-Direction random_direction();
 
 #endif
