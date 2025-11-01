@@ -1,6 +1,8 @@
 // This function contains utility functions used by numerous programs
 #include "../include/utils.h"
 
+#include <stdlib.h>
+
 //  this function generates a random Direction from robot.c to use to generate a cluster
 Direction random_direction()
 {

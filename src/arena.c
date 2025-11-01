@@ -257,7 +257,7 @@ Arena* create_arena(int width, int height)
     arena->arenaHeight = height;
 
     // allocate robot's memory
-    allocate_robots_memory(arena);
+    allocate_arena_grid(arena);
 
     return arena;
 }
@@ -271,9 +271,9 @@ static void free_arena_grid(Arena *arena)
     free(arena->arenaGrid);
 }
 
-// this function frees overall robot struct memory
-void free_robot(Arena *arena)
+// this function frees overall arena struct memory
+void free_arena(Arena *arena)
 {
-    free_robots_memory(arena);
+    free_arena_grid(arena);
     free(arena);
 }

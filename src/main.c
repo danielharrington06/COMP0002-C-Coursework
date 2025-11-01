@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     Arena *arena = create_arena(ARENA_WIDTH, ARENA_HEIGHT);
     if (arena == NULL) return 1;
 
-    Robot *robot = create_robot(&arena);
+    Robot *robot = create_robot(arena);
     if (robot == NULL) return 1;
 
     // start

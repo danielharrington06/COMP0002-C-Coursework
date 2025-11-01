@@ -33,21 +33,11 @@ typedef enum {
 } MarkerFormation;
 
 // functions to generate obstacles and markers
-int is_tile_in_direction_free(Arena*, int, int, Direction);
-static void generate_obstacles_random(Arena*, int);
-static void generate_obstacles_clustered(Arena*, int);
-static void generate_obstacles_wall(Arena*, int);
-static void generate_obstacles_cavern(Arena*);
 void generate_obstacles(Arena*, int, ObstacleFormation);
-static void generate_marker_edge(Arena*);
-static void generate_marker_anywhere(Arena*);
-static void generate_markers_random(Arena*, int);
 void generate_markers(Arena*, int, MarkerFormation);
 
 // functions dealing with arena struct
-static void allocate_arena_grid(Arena*);
 Arena* create_arena(int, int);
-static void free_arena_grid(Arena*);
 void free_arena(Arena*);
 
 #endif

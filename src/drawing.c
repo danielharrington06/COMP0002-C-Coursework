@@ -29,7 +29,7 @@ static void calculate_window_dimensions(Arena *arena)
 }
 
 // this function calculates the maximum arenaWidth for the screen, taking into account tile size and display width
-int calculate_max_arena_width() 
+int calculate_max_arena_width()
 {
     return (MAX_WINDOW_WIDTH - 2*BORDER_THICKNESS) / TILE_SIZE; // integer division on purpose
 }
