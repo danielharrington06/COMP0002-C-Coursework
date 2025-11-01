@@ -13,7 +13,7 @@
 const int TILE_SIZE = 40;
 const int GRIDLINE_WIDTH = 2;
 const int BORDER_THICKNESS = 8;
-const int OBJECT_PADDING = 5; // padding between edge of an obstacle or marker to edge of tile
+const int OBJECT_PADDING = 4; // padding between edge of an obstacle or marker to edge of tile
 const int MAX_WINDOW_WIDTH = 1600;
 const int MAX_WINDOW_HEIGHT = 800;
 
@@ -98,18 +98,18 @@ static Point* equ_triangle_coords(double triangle_circumrad)
         return NULL;
     }
 
-    vertices[0].x = 0;
-    vertices[0].y = triangle_circumrad;
-    vertices[1].x = triangle_circumrad*cos(PI/3);
-    vertices[1].y = triangle_circumrad*sin(PI/3);
-    vertices[2].x = triangle_circumrad*cos(2*PI/3);
-    vertices[2].y = triangle_circumrad*sin(2*PI/3);
+    vertices[0].x = triangle_circumrad*cos(PI/2);
+    vertices[0].y = triangle_circumrad*sin(PI/2) - OBJECT_PADDING/2;
+    vertices[1].x = triangle_circumrad*cos(-PI/6);
+    vertices[1].y = triangle_circumrad*sin(-PI/6) - OBJECT_PADDING/2;
+    vertices[2].x = triangle_circumrad*cos(7*PI/6);
+    vertices[2].y = triangle_circumrad*sin(7*PI/6) - OBJECT_PADDING/2;
 
     return vertices;
 }
 
 // this function rotates a single point around the origin
-static void rotate_point(Point *point, int degrees) 
+static void rotate_point(Point *point, double degrees) 
 {
     double radians = ((double)degrees) * PI / 180.0;
 
@@ -136,19 +136,19 @@ static void rotate_points(Point* vertices, int numV, int degrees)
 // this function draws a triangle on a specific arenaGrid tile
 static void draw_triangle(Point* vertices, int x, int y)
 {
+    setColour(blue);
     int numVertices = 3;
 
     // convert from arenaGrid x,y to coordinate x, y
     int offsetX = BORDER_THICKNESS + x*TILE_SIZE + 0.5*TILE_SIZE;
     int offsetY = BORDER_THICKNESS + y*TILE_SIZE + 0.5*TILE_SIZE;
 
-    // place in array so they are accepted by fillPolygon
-    int xCoords[] = {vertices[0].x, vertices[1].x, vertices[2].x};
-    int yCoords[] = {vertices[0].y, vertices[1].y, vertices[2].y};
+    int xCoords[3];
+    int yCoords[3];
 
     // iterate over xCoords then yCoords to offset them to the right position
-    for (int i = 0; i < numVertices; i++) { xCoords[i] += offsetX; }
-    for (int i = 0; i < numVertices; i++) { yCoords[i] += offsetY; }
+    for (int i = 0; i < numVertices; i++) xCoords[i] = round(vertices[i].x + offsetX);
+    for (int i = 0; i < numVertices; i++) yCoords[i] = round(-vertices[i].y + offsetY);
 
     fillPolygon(numVertices, xCoords, yCoords);
 }
@@ -164,7 +164,7 @@ static void draw_robot(Robot *robot)
     */
 
     // triangle radius is the distance from center to vertice
-    double triangle_circumrad = TILE_SIZE/2 - BORDER_THICKNESS;
+    double triangle_circumrad = TILE_SIZE/2 - OBJECT_PADDING;
 
     // generate vertices
     Point* vertices = equ_triangle_coords(triangle_circumrad);
@@ -192,7 +192,7 @@ static void draw_marker(int x, int y)
 
     // draw
     setColour(gray);
-    fillRect(coordX, coordY, obstacle_size, obstacle_size);
+    fillArc(coordX, coordY, obstacle_size, obstacle_size, 0, 360);
 }
 
 // this function iterates over arenaGrid and calls the function to render markers
@@ -223,6 +223,8 @@ void draw_background(Arena *arena)
 // this function draws the foreground - called once per robot moveent; pre-requisite: robot created, markers generated
 void draw_foreground(Arena *arena, Robot *robot)
 {
+    clear();
     draw_robot(robot);
     draw_markers(arena);
+    sleep(50);
 }

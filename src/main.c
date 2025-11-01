@@ -5,6 +5,8 @@
 #include "../include/robot.h"
 #include "../include/utils.h"
 
+#include "../lib/graphics.h"
+
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -33,13 +35,19 @@ int main(int argc, char *argv[])
     place_robot(argc, argv, robot, arena);
 
     // generate obstacles and markers
-    generate_obstacles(arena, 1, O_SINGLE_WALL);
+    generate_obstacles(arena, 0, O_NONE);
     generate_markers(arena, 1, M_EDGE);
     
     // render
+    background();
     draw_background(arena);
+    sleep(1000);
 
 // loop
+    foreground();
+    while (1) {
+        draw_foreground(arena, robot);
+    }
 
 // end
     free_robot(robot);
