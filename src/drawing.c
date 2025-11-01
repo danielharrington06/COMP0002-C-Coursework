@@ -41,7 +41,7 @@ int calculate_max_arena_height()
 }
 
 // this function draws the red border around the screen
-void draw_border(Arena *arena) 
+static void draw_border(Arena *arena) 
 {
     setColour(red);
     fillRect(0, 0, arena->arenaWidth, arena->arenaHeight);
@@ -50,7 +50,7 @@ void draw_border(Arena *arena)
 }
 
 // this function draws the black grid across the screen
-void draw_grid(Arena *arena)
+static void draw_grid(Arena *arena)
 {
     setColour(black);
     // vertical lines first
@@ -65,7 +65,7 @@ void draw_grid(Arena *arena)
 }
 
 // this function draws a single obstacle at arena position (x, y)
-void draw_obstacle(int x, int y) 
+static void draw_obstacle(int x, int y) 
 {
     // convert arena position (x, y) to coordinates for top left of shape
     int coordX = BORDER_THICKNESS + x*TILE_SIZE + OBJECT_PADDING;
@@ -78,7 +78,7 @@ void draw_obstacle(int x, int y)
 }
 
 // this function iterates over arenaGrid and calls the function to render obstacles
-void draw_obstacles(Arena *arena)
+static void draw_obstacles(Arena *arena)
 {
     for (int i = 0; i < arena->arenaWidth; i++) {
         for (int j = 0; j < arena->arenaHeight; i++) {
@@ -90,7 +90,7 @@ void draw_obstacles(Arena *arena)
 }
 
 // this function returns a pointer to an array of Points representing the vertices of an equilateral triangle with its base at the bottom
-Point* equ_triangle_coords(double triangle_circumrad)
+static Point* equ_triangle_coords(double triangle_circumrad)
 {
     // a triangle's circumradius is the distance from the center to any vertex
     Point *vertices = malloc(3 * sizeof(Point));
@@ -109,7 +109,7 @@ Point* equ_triangle_coords(double triangle_circumrad)
 }
 
 // this function rotates a single point around the origin
-void rotate_point(Point *point, int degrees) 
+static void rotate_point(Point *point, int degrees) 
 {
     double radians = ((double)degrees) * PI / 180.0;
 
@@ -126,7 +126,7 @@ void rotate_point(Point *point, int degrees)
 }
 
 // this function rotates points around origin and returns them in place
-void rotate_points(Point* vertices, int numV, int degrees) 
+static void rotate_points(Point* vertices, int numV, int degrees) 
 {
     for (int i = 0; i < numV; i++) {
         rotate_point(&vertices[i], degrees);
@@ -134,7 +134,7 @@ void rotate_points(Point* vertices, int numV, int degrees)
 }
 
 // this function draws a triangle on a specific arenaGrid tile
-void draw_triangle(Point* vertices, int x, int y)
+static void draw_triangle(Point* vertices, int x, int y)
 {
     int numVertices = 3;
 
@@ -154,7 +154,7 @@ void draw_triangle(Point* vertices, int x, int y)
 }
 
 // this function draws the robot at its current arenaGrid position and direction
-void draw_robot(Robot *robot) 
+static void draw_robot(Robot *robot) 
 {
     /* 
     general idea here is to define the coordinates needed if the robot 
@@ -183,7 +183,7 @@ void draw_robot(Robot *robot)
 }
 
 // this function draws a single marker at arena position (x, y)
-void draw_marker(int x, int y) 
+static void draw_marker(int x, int y) 
 {
     // convert arena position (x, y) to coordinates for top left of shape
     int coordX = BORDER_THICKNESS + x*TILE_SIZE + OBJECT_PADDING;
@@ -196,7 +196,7 @@ void draw_marker(int x, int y)
 }
 
 // this function iterates over arenaGrid and calls the function to render markers
-void draw_markers(Arena *arena)
+static void draw_markers(Arena *arena)
 {
     for (int i = 0; i < arena->arenaWidth; i++) {
         for (int j = 0; j < arena->arenaHeight; i++) {

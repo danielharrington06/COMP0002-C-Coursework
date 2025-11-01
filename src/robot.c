@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
-void forward(Robot *robot) 
+static void forward(Robot *robot) 
 {
     switch(robot->direction) {
         case (NORTH):
@@ -27,25 +27,25 @@ void forward(Robot *robot)
 }
 
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
-void turn_left(Robot *robot) 
+static void turn_left(Robot *robot) 
 {
     robot->direction = robot->direction + 3 % 4;
 }
 
 // this function rotates the robot 90 degrees clockwise (right 90 degree turn)
-void turn_right(Robot *robot) 
+static void turn_right(Robot *robot) 
 {
     robot->direction = robot->direction + 1 % 4;
 }
 
 // this function checks if the robot is at the marker
-int is_at_marker(Robot *robot, Arena *arena) 
+static int is_at_marker(Robot *robot, Arena *arena) 
 {
     return arena->arenaGrid[robot->x][robot->y] == TILE_MARKER;
 }
 
 // this function checks if the robot can move forward
-int can_move_forward(Robot *robot, Arena *arena) 
+static int can_move_forward(Robot *robot, Arena *arena) 
 {
     // store a copy of x and y
     int x = robot->x;
@@ -71,7 +71,7 @@ int can_move_forward(Robot *robot, Arena *arena)
 }
 
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
-void pickup_marker(Robot *robot, Arena *arena) 
+static void pickup_marker(Robot *robot, Arena *arena) 
 {
     arena->arenaGrid[robot->x][robot->y] = TILE_EMPTY;
     arena->numMarker--;
@@ -79,7 +79,7 @@ void pickup_marker(Robot *robot, Arena *arena)
 }
 
 // this function drops a marker onto the grid; pre-requesite: is_at_marker() is false
-void drop_marker(Robot *robot, Arena *arena) 
+static void drop_marker(Robot *robot, Arena *arena) 
 {
     robot->markerCount--;
     arena->numMarker++;
@@ -87,13 +87,13 @@ void drop_marker(Robot *robot, Arena *arena)
 }
 
 // this function returns the number of markers the robot is carrying
-int get_marker_carry_count(Robot *robot) 
+static int get_marker_carry_count(Robot *robot) 
 {
     return robot->markerCount;
 }
 
 // this function returns the number of markers left on the grid
-int get_marker_arena_count(Arena *arena) 
+static int get_marker_arena_count(Arena *arena) 
 {
     return arena->numMarker;
 }

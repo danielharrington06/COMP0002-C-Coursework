@@ -12,7 +12,7 @@
 #include <math.h>
 
 // this function generates a random coordinate from 0 to width_height which represents either the width or height of the grid
-int random_coord(int width_height)
+int static random_coord(int width_height)
 {
     return rand() % width_height;
 }
@@ -25,7 +25,7 @@ int min(int a, int b)
 }
 
 // this function determines if the tile relative to (x, y) in direction direction is empty
-int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
+static int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
 {
     switch(direction) {
         case(NORTH):
@@ -51,7 +51,7 @@ int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
 }
 
 // this function generates obstacles randomly; pre-requisite: arenaGrid is completely empty
-void generate_obstacles_random(Arena *arena, int numObstacles) 
+static void generate_obstacles_random(Arena *arena, int numObstacles) 
 {
     // make sure we aren't trying to place more obstacles than half the grid
     assert(numObstacles < arena->arenaWidth*arena->arenaHeight/2);
@@ -70,7 +70,7 @@ void generate_obstacles_random(Arena *arena, int numObstacles)
 }
 
 // this function generates obstacles clustered together - it tries to place them in groups of up to3; pre-requisite: arenaGrid is completely empty
-void generate_obstacles_clustered(Arena *arena, int numClusters)
+static void generate_obstacles_clustered(Arena *arena, int numClusters)
 {
     // make sure we aren't trying to place more obstacles than half the grid
     assert(numClusters < arena->arenaWidth*arena->arenaHeight/(2*3));
@@ -100,7 +100,7 @@ void generate_obstacles_clustered(Arena *arena, int numClusters)
 }
 
 // this function generates a vertical wall from the bottom of the screen to near the top with a length specified; pre-requisite: arenaGrid is completely empty
-void generate_obstacles_wall(Arena* arena, int numObstacles)
+static void generate_obstacles_wall(Arena* arena, int numObstacles)
 {
     assert(numObstacles < arena->arenaHeight);
 
@@ -112,7 +112,7 @@ void generate_obstacles_wall(Arena* arena, int numObstacles)
 }
 
 // this function creates a cavern by finding a central arenaGrid coordinate and determines whether each coordinate is within a set radius; pre-requisite: arenaGrid is completely empty
-void generate_obstacles_cavern(Arena *arena)
+static void generate_obstacles_cavern(Arena *arena)
 {
     // define radius and centre of the cavern
     int radius = min(arena->arenaWidth, arena->arenaHeight)/2 - 1;
@@ -155,7 +155,7 @@ void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation format
 }
 
 // this function generates a single marker somewhere along the edge of the grid; pre-requisite: no obstacles placed
-void generate_marker_edge(Arena *arena)
+static void generate_marker_edge(Arena *arena)
 {
     // randomly choose a number from 0 to 4 to represent top, right, bottom or left
     // when thinking clockwise, the first tile is part of that row
@@ -174,7 +174,7 @@ void generate_marker_edge(Arena *arena)
     }
 }
 
-void generate_marker_anywhere(Arena *arena)
+static void generate_marker_anywhere(Arena *arena)
 {
     int x = rand() % arena->arenaWidth;
     int y = rand() % arena->arenaHeight;
@@ -183,7 +183,7 @@ void generate_marker_anywhere(Arena *arena)
 }
 
 // this function generates markers randomly; pre-requesite: obstacles have already been spawned
-void generate_markers_random(Arena *arena, int numMarkers)
+static void generate_markers_random(Arena *arena, int numMarkers)
 {
     // theoretically could become an infinite loop, but in reality unlikely to
     for (int i = 0; i < numMarkers; i++) {
