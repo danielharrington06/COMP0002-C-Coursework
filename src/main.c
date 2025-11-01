@@ -7,30 +7,41 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
-int width = 10;
-int height = 10;
+int width = 12;
+int height = 12;
 
 int main(int argc, char *argv[])
 {
-    // setup
-    srand(time(NULL));
-    
-    const int ARENA_WIDTH = max(width, calculate_max_arena_width());
-    const int ARENA_HEIGHT = max(height, calculate_max_arena_height());
-    
+// setup
+    srand(time(NULL)); // seed random with time
+
+    // determine arena width and height from the min of assigned size and max possible size
+    const int ARENA_WIDTH = min(width, calculate_max_arena_width()); 
+    const int ARENA_HEIGHT = min(height, calculate_max_arena_height());
+
+    // create arena and robot, dealing with memory allocation failures - error messages dealt with in functions
     Arena *arena = create_arena(ARENA_WIDTH, ARENA_HEIGHT);
     if (arena == NULL) return 1;
-
     Robot *robot = create_robot(arena);
     if (robot == NULL) return 1;
 
-    // start
+// start
+
+    // use command line arguments to place robot correctly
     place_robot(argc, argv, robot, arena);
 
-    // loop
+    // generate obstacles and markers
+    generate_obstacles(arena, 1, O_SINGLE_WALL);
+    generate_markers(arena, 1, M_EDGE);
+    
+    // render
+    draw_background(arena);
 
-    // end
+// loop
+
+// end
     free_robot(robot);
     free_arena(arena);
     

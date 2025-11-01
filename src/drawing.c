@@ -24,8 +24,8 @@ int WINDOW_HEIGHT = 0;
 // this function calculates window dimensions (width and height); pre-requesite: arenaWidth and arenaHeight are less than their maximum values
 static void calculate_window_dimensions(Arena *arena) 
 {
-    WINDOW_WIDTH = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaWidth + (arena->arenaWidth+1)*GRIDLINE_WIDTH;
-    WINDOW_HEIGHT = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaHeight + (arena->arenaHeight+1)*GRIDLINE_WIDTH;
+    WINDOW_WIDTH = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaWidth;
+    WINDOW_HEIGHT = 2*BORDER_THICKNESS + TILE_SIZE*arena->arenaHeight;
 }
 
 // this function calculates the maximum arenaWidth for the screen, taking into account tile size and display width
@@ -44,9 +44,9 @@ int calculate_max_arena_height()
 static void draw_border(Arena *arena) 
 {
     setColour(red);
-    fillRect(0, 0, arena->arenaWidth, arena->arenaHeight);
+    fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     setColour(white);
-    fillRect(BORDER_THICKNESS, BORDER_THICKNESS, arena->arenaWidth-2*BORDER_THICKNESS, arena->arenaHeight-2*BORDER_THICKNESS);
+    fillRect(BORDER_THICKNESS, BORDER_THICKNESS, WINDOW_WIDTH-2*BORDER_THICKNESS, WINDOW_HEIGHT-2*BORDER_THICKNESS);
 }
 
 // this function draws the black grid across the screen
@@ -81,7 +81,7 @@ static void draw_obstacle(int x, int y)
 static void draw_obstacles(Arena *arena)
 {
     for (int i = 0; i < arena->arenaWidth; i++) {
-        for (int j = 0; j < arena->arenaHeight; i++) {
+        for (int j = 0; j < arena->arenaHeight; j++) {
             if (arena->arenaGrid[i][j] == TILE_OBSTACLE) {
                 draw_obstacle(i, j);
             }
@@ -199,7 +199,7 @@ static void draw_marker(int x, int y)
 static void draw_markers(Arena *arena)
 {
     for (int i = 0; i < arena->arenaWidth; i++) {
-        for (int j = 0; j < arena->arenaHeight; i++) {
+        for (int j = 0; j < arena->arenaHeight; j++) {
             if (arena->arenaGrid[i][j] == TILE_MARKER) {
                 draw_marker(i, j);
             }
@@ -213,6 +213,8 @@ static void draw_markers(Arena *arena)
 void draw_background(Arena *arena)
 {
     calculate_window_dimensions(arena);
+    setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    printf("%d, %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
     draw_border(arena);
     draw_grid(arena);
     draw_obstacles(arena);

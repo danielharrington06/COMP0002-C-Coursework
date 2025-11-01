@@ -33,13 +33,13 @@ static void forward(Robot *robot)
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
 static void turn_left(Robot *robot) 
 {
-    robot->direction = robot->direction + 3 % 4;
+    robot->direction = (robot->direction + 3) % 4;
 }
 
 // this function rotates the robot 90 degrees clockwise (right 90 degree turn)
 static void turn_right(Robot *robot) 
 {
-    robot->direction = robot->direction + 1 % 4;
+    robot->direction = (robot->direction + 1) % 4;
 }
 
 // this function checks if the robot is at the marker
@@ -75,7 +75,7 @@ static int can_move_forward(Robot *robot, Arena *arena)
     if (x >= arena->arenaWidth || y >= arena->arenaHeight) return 0;
 
     // check if it hits an obstacle
-    return !(arena->arenaGrid[x][y] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
+    return !(arena->arenaGrid[y][x] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
 }
 
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
@@ -185,10 +185,10 @@ static void place_robot_random(Robot *robot, Arena *arena)
         // add 1 and -2 is used to not place robot at edge
         x = 1 + random_coord(robot->arenaWidth-2);
         y = 1 + random_coord(robot->arenaHeight-2);
-    } while (arena->arenaGrid[x][y] != TILE_EMPTY);
+    } while (arena->arenaGrid[y][x] != TILE_EMPTY);
 
     // assign this as robot start on arena 
-    arena->arenaGrid[x][y] = TILE_ROBOT_START;
+    arena->arenaGrid[y][x] = TILE_ROBOT_START;
     
     // assign values to robot
     robot->x = x;
@@ -200,17 +200,18 @@ static void place_robot_random(Robot *robot, Arena *arena)
 static void place_robot_specific(Robot *robot, Arena *arena, int x, int y, Direction direction)
 {
     // if the entered position is taken, place the robot randomly
-    if (arena->arenaGrid[x][y] != TILE_EMPTY) {
+    if (arena->arenaGrid[y][x] != TILE_EMPTY) {
         place_robot_random(robot, arena);
         return;
     }
 
     // assign x, y as start on arena
-    arena->arenaGrid[x][y] = TILE_ROBOT_START;
+    arena->arenaGrid[y][x] = TILE_ROBOT_START;
 
     // assign values to robot
     robot->x = x;
-    robot->y = direction;
+    robot->y = y;
+    robot->direction = direction;
 }
 
 // this function parses an entered direction

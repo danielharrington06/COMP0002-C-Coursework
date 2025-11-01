@@ -35,7 +35,7 @@ static int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direc
     if (x >= arena->arenaWidth || y >= arena->arenaHeight) return 0;
 
     // check if empty
-    return arena->arenaGrid[x][y] == TILE_EMPTY;
+    return arena->arenaGrid[y][x] == TILE_EMPTY;
 }
 
 // this function generates obstacles randomly; pre-requisite: arenaGrid is completely empty
@@ -51,9 +51,9 @@ static void generate_obstacles_random(Arena *arena, int numObstacles)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[x][y] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
 
-        arena->arenaGrid[x][y] = TILE_OBSTACLE;
+        arena->arenaGrid[y][x] = TILE_OBSTACLE;
     }
 }
 
@@ -70,16 +70,16 @@ static void generate_obstacles_clustered(Arena *arena, int numClusters)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[x][y] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
 
-        arena->arenaGrid[x][y] = TILE_OBSTACLE;
+        arena->arenaGrid[y][x] = TILE_OBSTACLE;
 
         // spawn the others in the cluster
         int placed = 0; // keep track of how many have been placed
         int dir = (int)random_direction(); // get random direction to start at
         for (int i = 0; i < 4; i++) {
             if (is_tile_in_direction_free(arena, x, y, (Direction)dir)) {
-                arena->arenaGrid[x][y] = TILE_OBSTACLE;
+                arena->arenaGrid[y][x] = TILE_OBSTACLE;
                 placed++;
             }
             if (placed == 2) break; // clusters of up to 3
@@ -111,7 +111,7 @@ static void generate_obstacles_cavern(Arena *arena)
         for (int y = 0; y < arena->arenaHeight; y++) {
             int distToCentre = pow(centreX-x, 2) + pow(centreY-y, 2);
             if (distToCentre > radius) {
-                arena->arenaGrid[x][y] = TILE_OBSTACLE;
+                arena->arenaGrid[y][x] = TILE_OBSTACLE;
             }
         }
     }
@@ -151,12 +151,12 @@ static void generate_marker_edge(Arena *arena)
 
     // deal with vertical then horizontal
     if (r % 2 == 0) {
-        int pos = rand() % arena->arenaWidth - 1;
+        int pos = rand() % (arena->arenaWidth - 1);
         if (r == 0) arena->arenaGrid[pos][0] = TILE_MARKER;
         if (r == 2) arena->arenaGrid[pos+1][arena->arenaHeight-1] = TILE_MARKER;
     }
     else {
-        int pos = rand() % arena->arenaHeight - 1;
+        int pos = rand() % (arena->arenaHeight - 1);
         if (r == 1) arena->arenaGrid[arena->arenaWidth-1][pos] = TILE_MARKER;
         if (r == 3) arena->arenaGrid[0][pos+1] = TILE_MARKER;
     }
@@ -167,7 +167,7 @@ static void generate_marker_anywhere(Arena *arena)
     int x = rand() % arena->arenaWidth;
     int y = rand() % arena->arenaHeight;
 
-    arena->arenaGrid[x][y] = TILE_MARKER;
+    arena->arenaGrid[y][x] = TILE_MARKER;
 }
 
 // this function generates markers randomly; pre-requesite: obstacles have already been spawned
@@ -180,9 +180,9 @@ static void generate_markers_random(Arena *arena, int numMarkers)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[x][y] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
 
-        arena->arenaGrid[x][y] = TILE_MARKER;
+        arena->arenaGrid[y][x] = TILE_MARKER;
     }
 }
 
