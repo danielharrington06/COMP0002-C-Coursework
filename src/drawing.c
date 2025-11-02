@@ -17,6 +17,8 @@ const int OBJECT_PADDING = 4; // padding between edge of an obstacle or marker t
 const int MAX_WINDOW_WIDTH = 1600;
 const int MAX_WINDOW_HEIGHT = 800;
 
+const int TIME_INTERVAL = 80;
+
 // these are determined by arena dimensions and TILE_SIZE and BORDER_THICKNESS
 int WINDOW_WIDTH = 0;
 int WINDOW_HEIGHT = 0;
@@ -60,7 +62,7 @@ static void draw_grid(Arena *arena)
 
     // horizontal lines second
     for (int i = 0; i < arena->arenaHeight + 1; i++) {
-        fillRect(BORDER_THICKNESS, BORDER_THICKNESS+i*TILE_SIZE-1, WINDOW_HEIGHT-2*BORDER_THICKNESS, 2);
+        fillRect(BORDER_THICKNESS, BORDER_THICKNESS+i*TILE_SIZE-1, WINDOW_WIDTH-2*BORDER_THICKNESS, 2);
     }
 }
 
@@ -80,10 +82,10 @@ static void draw_obstacle(int x, int y)
 // this function iterates over arenaGrid and calls the function to render obstacles
 static void draw_obstacles(Arena *arena)
 {
-    for (int i = 0; i < arena->arenaWidth; i++) {
-        for (int j = 0; j < arena->arenaHeight; j++) {
-            if (arena->arenaGrid[i][j] == TILE_OBSTACLE) {
-                draw_obstacle(i, j);
+    for (int y = 0; y < arena->arenaHeight; y++) {
+        for (int x = 0; x < arena->arenaWidth; x++) {
+            if (arena->arenaGrid[y][x] == TILE_OBSTACLE) {
+                draw_obstacle(x, y);
             }
         }
     }
@@ -147,7 +149,8 @@ static void draw_triangle(Point* vertices, int x, int y)
     int yCoords[3];
 
     // iterate over xCoords then yCoords to offset them to the right position
-    for (int i = 0; i < numVertices; i++) xCoords[i] = round(vertices[i].x + offsetX);
+    // - vertices[i] needed to get it to render correctly (conversion from cartesian to drawapp coords)
+    for (int i = 0; i < numVertices; i++) xCoords[i] = round(-vertices[i].x + offsetX);
     for (int i = 0; i < numVertices; i++) yCoords[i] = round(-vertices[i].y + offsetY);
 
     fillPolygon(numVertices, xCoords, yCoords);
@@ -198,10 +201,10 @@ static void draw_marker(int x, int y)
 // this function iterates over arenaGrid and calls the function to render markers
 static void draw_markers(Arena *arena)
 {
-    for (int i = 0; i < arena->arenaWidth; i++) {
-        for (int j = 0; j < arena->arenaHeight; j++) {
-            if (arena->arenaGrid[i][j] == TILE_MARKER) {
-                draw_marker(i, j);
+    for (int y = 0; y < arena->arenaHeight; y++) {
+        for (int x = 0; x < arena->arenaWidth; x++) {
+            if (arena->arenaGrid[y][x] == TILE_MARKER) {
+                draw_marker(x, y);
             }
         }
     }
@@ -222,10 +225,10 @@ void draw_background(Arena *arena)
 }
 
 // this function draws the foreground - called once per robot moveent; pre-requisite: robot created, markers generated
-void draw_foreground(Arena *arena, Robot *robot)
+void draw_foreground(Robot *robot, Arena *arena)
 {
     clear();
-    draw_robot(robot);
     draw_markers(arena);
-    sleep(50);
+    draw_robot(robot);
+    sleep(TIME_INTERVAL);
 }

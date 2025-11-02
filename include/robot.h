@@ -25,4 +25,7 @@ Robot* create_robot(Arena*);
 void free_robot(Robot*);
 void place_robot(int, char**, Robot*, Arena*);
 
+// main algorithm to find markers
+void find_markers(Robot*, Arena*);
+
 #endif

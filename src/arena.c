@@ -145,21 +145,26 @@ void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation format
 // this function generates a single marker somewhere along the edge of the grid; pre-requisite: no obstacles placed
 static void generate_marker_edge(Arena *arena)
 {
-    // randomly choose a number from 0 to 4 to represent top, right, bottom or left
-    // when thinking clockwise, the first tile is part of that row
-    int r = rand() % 4;
+    int x, y;
+    do { // assign x and y coords until the tile is empty
+        // randomly choose a number from 0 to 4 to represent top, right, bottom or left
+        // each option includes the first tile (e.g. top includes top left, right includes top right)
+        int r = rand() % 4;
 
-    // deal with vertical then horizontal
-    if (r % 2 == 0) {
-        int pos = rand() % (arena->arenaWidth - 1);
-        if (r == 0) arena->arenaGrid[pos][0] = TILE_MARKER;
-        if (r == 2) arena->arenaGrid[pos+1][arena->arenaHeight-1] = TILE_MARKER;
-    }
-    else {
-        int pos = rand() % (arena->arenaHeight - 1);
-        if (r == 1) arena->arenaGrid[arena->arenaWidth-1][pos] = TILE_MARKER;
-        if (r == 3) arena->arenaGrid[0][pos+1] = TILE_MARKER;
-    }
+        // deal with top/bottom first
+        if (r % 2 == 0) {
+            int pos = random_coord(arena->arenaWidth-1);
+            if (r == 0) { x = pos; y = 0; } // top
+            if (r == 2) { x = pos+1; y = arena->arenaHeight-1; } // bottom
+        }
+        else { // then left/right
+            int pos = random_coord(arena->arenaHeight-1);
+            if (r == 1) { x = arena->arenaWidth-1; y = pos; } // right
+            if (r == 3) { x = 0; y = pos+1; } // left
+        }
+    } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+
+    arena->arenaGrid[y][x] = TILE_MARKER;
 }
 
 static void generate_marker_anywhere(Arena *arena)

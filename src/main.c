@@ -11,8 +11,8 @@
 #include <time.h>
 #include <stdio.h>
 
-int width = 12;
-int height = 12;
+int width = 100;
+int height = 100;
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     // determine arena width and height from the min of assigned size and max possible size
     const int ARENA_WIDTH = min(width, calculate_max_arena_width()); 
     const int ARENA_HEIGHT = min(height, calculate_max_arena_height());
+    printf("%d, %d\n", ARENA_WIDTH, ARENA_HEIGHT);
 
     // create arena and robot, dealing with memory allocation failures - error messages dealt with in functions
     Arena *arena = create_arena(ARENA_WIDTH, ARENA_HEIGHT);
@@ -44,9 +45,7 @@ int main(int argc, char *argv[])
 
 // loop
     foreground();
-    while (1) {
-        draw_foreground(arena, robot);
-    }
+    find_markers(robot, arena);
 
 // end
     free_robot(robot);

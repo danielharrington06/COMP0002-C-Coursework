@@ -45,7 +45,7 @@ static void turn_right(Robot *robot)
 // this function checks if the robot is at the marker
 static int is_at_marker(Robot *robot, Arena *arena) 
 {
-    return arena->arenaGrid[robot->x][robot->y] == TILE_MARKER;
+    return arena->arenaGrid[robot->y][robot->x] == TILE_MARKER;
 }
 
 // this function checks if the robot can move forward
@@ -81,7 +81,7 @@ static int can_move_forward(Robot *robot, Arena *arena)
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
 static void pickup_marker(Robot *robot, Arena *arena) 
 {
-    arena->arenaGrid[robot->x][robot->y] = TILE_EMPTY;
+    arena->arenaGrid[robot->y][robot->x] = TILE_EMPTY;
     arena->numMarker--;
     robot->markerCount++;
 }
@@ -91,7 +91,7 @@ static void drop_marker(Robot *robot, Arena *arena)
 {
     robot->markerCount--;
     arena->numMarker++;
-    arena->arenaGrid[robot->x][robot->y] = TILE_MARKER;
+    arena->arenaGrid[robot->y][robot->x] = TILE_MARKER;
 }
 
 // this function returns the number of markers the robot is carrying
@@ -261,4 +261,27 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
     }
 
     place_robot_random(robot, arena);
+}
+
+// main algorithm to find markers:
+
+// this function navigates to an edge and then moves around the edge, checking for markers
+void find_markers(Robot *robot, Arena *arena)
+{
+    while (get_marker_arena_count(arena) > 0) {
+        // check movement
+        if (can_move_forward(robot, arena)) {
+            forward(robot);
+        }
+        else {
+            turn_right(robot);
+        }
+        draw_foreground(robot, arena);
+
+        // now check for marker
+        if (is_at_marker(robot, arena)) {
+            pickup_marker(robot, arena);
+            draw_foreground(robot, arena);
+        }
+    }
 }
