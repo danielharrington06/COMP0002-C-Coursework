@@ -236,10 +236,10 @@ static Direction parse_direction(const char *input) {
 void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
 {
     // specific position
-    if (argc == 4) {
-        int x = atoi(argv[1]);
-        int y = atoi(argv[2]);
-        Direction direction = parse_direction(argv[3]);
+    if (argc == 6) {
+        int x = atoi(argv[3]);
+        int y = atoi(argv[4]);
+        Direction direction = parse_direction(argv[5]);
 
         // check out of bounds - if so, give random position and direction
         if (x < 0 || y < 0 || x >= robot->arenaWidth || y >= robot->arenaHeight) {

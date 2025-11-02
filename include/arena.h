@@ -40,4 +40,8 @@ void generate_markers(Arena*, int, MarkerFormation);
 Arena* create_arena(int, int);
 void free_arena(Arena*);
 
+// function to determine arena size
+int determine_arena_width(int, char**);
+int determine_arena_height(int, char**);
+
 #endif

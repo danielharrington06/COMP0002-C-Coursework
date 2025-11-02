@@ -11,18 +11,15 @@
 #include <time.h>
 #include <stdio.h>
 
-int width = 100;
-int height = 100;
-
 int main(int argc, char *argv[])
 {
 // setup
     srand(time(NULL)); // seed random with time
 
+    // determine arena dimensions
     // determine arena width and height from the min of assigned size and max possible size
-    const int ARENA_WIDTH = min(width, calculate_max_arena_width()); 
-    const int ARENA_HEIGHT = min(height, calculate_max_arena_height());
-    printf("%d, %d\n", ARENA_WIDTH, ARENA_HEIGHT);
+    const int ARENA_WIDTH = determine_arena_width(argc, argv); 
+    const int ARENA_HEIGHT = determine_arena_height(argc, argv);
 
     // create arena and robot, dealing with memory allocation failures - error messages dealt with in functions
     Arena *arena = create_arena(ARENA_WIDTH, ARENA_HEIGHT);

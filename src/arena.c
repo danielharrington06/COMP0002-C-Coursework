@@ -1,6 +1,7 @@
 // This file defines how the arena works
 
 #include "../include/arena.h"
+#include "../include/config.h"
 #include "../include/drawing.h"
 #include "../include/robot.h"
 #include "../include/utils.h"
@@ -281,4 +282,30 @@ void free_arena(Arena *arena)
 {
     free_arena_grid(arena);
     free(arena);
+}
+
+// functions to determine arena size:
+
+// this function determines the arena width with DEFAULT_SIZE as default
+int determine_arena_width(int argc, char *argv[])
+{
+    int width;
+    if (argc == 3 || argc == 6) { // dimensions have been specified correctly
+        width = atoi(argv[1]);
+        return min(width, calculate_max_arena_width());
+    }
+
+    return DEFAULT_ARENA_WIDTH;
+}
+
+// this function determines the arena height with DEFAULT_SIZE as default
+int determine_arena_height(int argc, char *argv[])
+{
+    int height;
+    if (argc == 3 || argc == 6) { // dimensions have been specified correctly
+        height = atoi(argv[2]);
+        return min(height, calculate_max_arena_height());
+    }
+
+    return DEFAULT_ARENA_HEIGHT;
 }

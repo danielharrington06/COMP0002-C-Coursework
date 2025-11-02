@@ -52,14 +52,17 @@ To run the program with the drawing application:
 ```bash
 ./robot-prog.out | java -jar drawapp-4.5.jar
 ```
-
-To specify a starting position and direction:
+To specify grid dimensions:
 ```bash
-./robot-prog.out <row> <col> <direction> | java -jar drawapp-4.5.jar
+./robot-prog.out <width> <height> | java -jar drawapp-4.5.jar
+```
+To specify grid dimenions and a starting position + direction:
+```bash
+./robot-prog.out <width> <height> <row> <col> <direction> | java -jar drawapp-4.5.jar
 ```
 Example:
 ```bash
-./robot-prog.out 3 4 east | java -jar drawapp-4.5.jar
+./robot-prog.out 10 10 3 4 east | java -jar drawapp-4.5.jar
 ```
 
 If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.

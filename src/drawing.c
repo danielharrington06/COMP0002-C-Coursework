@@ -1,6 +1,7 @@
 // This file contains functions to draw all of the onscreen features
 
 #include "../include/arena.h"
+#include "../include/config.h"
 #include "../include/drawing.h"
 
 #include "../lib/graphics.h"
@@ -9,15 +10,6 @@
 #include <math.h>
 
 #define PI 3.141592653
-
-const int TILE_SIZE = 40;
-const int GRIDLINE_WIDTH = 2;
-const int BORDER_THICKNESS = 8;
-const int OBJECT_PADDING = 4; // padding between edge of an obstacle or marker to edge of tile
-const int MAX_WINDOW_WIDTH = 1600;
-const int MAX_WINDOW_HEIGHT = 800;
-
-const int TIME_INTERVAL = 80;
 
 // these are determined by arena dimensions and TILE_SIZE and BORDER_THICKNESS
 int WINDOW_WIDTH = 0;
