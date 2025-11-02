@@ -39,9 +39,8 @@ int main(int argc, char *argv[])
     generate_markers(arena, 1, M_EDGE);
     
     // render
-    background();
     draw_background(arena);
-    sleep(1000);
+    sleep(500);
 
 // loop
     foreground();

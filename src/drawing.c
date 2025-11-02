@@ -214,6 +214,7 @@ void draw_background(Arena *arena)
 {
     calculate_window_dimensions(arena);
     setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    background();
     printf("%d, %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
     draw_border(arena);
     draw_grid(arena);
