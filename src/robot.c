@@ -268,6 +268,7 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
 // this function navigates to an edge and then moves around the edge, checking for markers
 void find_markers(Robot *robot, Arena *arena)
 {
+    draw_foreground(robot, arena);
     while (get_marker_arena_count(arena) > 0) {
         // check movement
         if (can_move_forward(robot, arena)) {
