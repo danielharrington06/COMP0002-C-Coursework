@@ -144,10 +144,29 @@ static int get_marker_arena_count(Arena *arena)
 }
 
 // this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
+static int check_forward_tile_unknown(Robot *robot)
+{
+    Coord *coord = get_forward_coord(robot);
+    if (coord == NULL) {
+        fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
+        return;
+    }
+    int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
+    free(coord);
+    return is_unknown;
+}
+
+// this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
 static int check_left_tile_unknown(Robot *robot)
 {
     Coord *coord = get_left_coord(robot);
-    return robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
+    if (coord == NULL) {
+        fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
+        return;
+    }
+    int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
+    free(coord);
+    return is_unknown; 
 }
 
 // this function sets the current tile to visited in robot's memory
