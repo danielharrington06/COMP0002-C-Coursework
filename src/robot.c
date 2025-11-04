@@ -47,19 +47,19 @@ static Coord* get_left_coord(Robot *robot)
     coord->x = robot->x;
     coord->y = robot->y;
 
-    // simulate the forward movement on coord in correct direction
+    // simulate the leftward movement on coord in correct direction
     switch(robot->direction) {
         case(NORTH):
-            coord->y--;
+            coord->x--;
             break;
         case(EAST):
-            coord->x++;
+            coord->y--;
             break;
         case(SOUTH):
-            coord->y++;
+            coord->x++;
             break;
         case(WEST):
-            coord->x--;
+            coord->y++;
     }
 
     return coord;
@@ -143,7 +143,7 @@ static int get_marker_arena_count(Arena *arena)
     return arena->numMarker;
 }
 
-// this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
+// this function checks the robot's memory to see if the tile ahead is unknown (and reachable)
 static int check_forward_tile_unknown(Robot *robot)
 {
     Coord *coord = get_forward_coord(robot);
@@ -151,22 +151,30 @@ static int check_forward_tile_unknown(Robot *robot)
         fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
         exit(EXIT_FAILURE);
     }
+    
+    // check for out of bounds
+    if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
+
     int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
     free(coord);
     return is_unknown;
 }
 
-// this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
+// this function checks the robot's memory to see if the tile to its left is unknown (and reachable)
 static int check_left_tile_unknown(Robot *robot)
 {
     Coord *coord = get_left_coord(robot);
     if (coord == NULL) {
-        fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
+        fprintf(stderr, "check_left_tile_unknown returned NULL pointer\n");
         exit(EXIT_FAILURE);
     }
+    
+    // check for out of bounds
+    if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
+
     int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
     free(coord);
-    return is_unknown; 
+    return is_unknown;
 }
 
 // this function sets the current tile to visited in robot's memory
@@ -189,6 +197,15 @@ static void mark_ahead_tile_obstacle(Robot *robot)
 
     robot->memory[coord->y][coord->x] = R_BLOCKED;
     free(coord);
+}
+
+// this function checks if the current tile is a marker and if so picks it up
+static void check_for_and_pickup_marker(Robot *robot, Arena *arena)
+{
+    if (is_at_marker(robot, arena)) {
+        pickup_marker(robot, arena);
+        draw_foreground(robot, arena);
+    }
 }
 
 // functions to deal with robot struct:
@@ -351,24 +368,40 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
 
 // main algorithm to find markers:
 
-// this function navigates to an edge and then moves around the edge, checking for markers
+// this function moves forward until it reaches the edge of the arena or an obstacle and spirals inwards to find all markers
 void find_markers(Robot *robot, Arena *arena)
 {
+    // draw starting position
     draw_foreground(robot, arena);
-    while (get_marker_arena_count(arena) > 0) {
-        // check movement
-        if (can_move_forward(robot, arena)) {
+
+    // move forward until an obstacle or arena wall is faced
+    while (can_move_forward(robot, arena)) 
+    {
+        forward(robot);
+        draw_foreground(robot, arena);
+        
+        check_for_and_pickup_marker(robot, arena);
+    }
+
+    turn_right(robot);
+    draw_foreground(robot, arena);
+
+    // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
+    while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
+    { 
+        if (check_left_tile_unknown(robot)) {
+            turn_left(robot);
+        }
+        else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) {
+            mark_current_tile_visited(robot);
             forward(robot);
         }
         else {
+            mark_ahead_tile_obstacle(robot);
             turn_right(robot);
         }
         draw_foreground(robot, arena);
 
-        // now check for marker
-        if (is_at_marker(robot, arena)) {
-            pickup_marker(robot, arena);
-            draw_foreground(robot, arena);
-        }
+        check_for_and_pickup_marker(robot, arena);
     }
 }
