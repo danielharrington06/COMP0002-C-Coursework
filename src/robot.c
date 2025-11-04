@@ -149,7 +149,7 @@ static int check_forward_tile_unknown(Robot *robot)
     Coord *coord = get_forward_coord(robot);
     if (coord == NULL) {
         fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
-        return;
+        exit(EXIT_FAILURE);
     }
     int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
     free(coord);
@@ -162,7 +162,7 @@ static int check_left_tile_unknown(Robot *robot)
     Coord *coord = get_left_coord(robot);
     if (coord == NULL) {
         fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
-        return;
+        exit(EXIT_FAILURE);
     }
     int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
     free(coord);
@@ -181,7 +181,7 @@ static void mark_ahead_tile_obstacle(Robot *robot)
     Coord *coord = get_forward_coord(robot);
     if (coord == NULL) {
         fprintf(stderr, "get_forward_coord returned NULL pointer\n");
-        return;
+        exit(EXIT_FAILURE);
     }
 
     // check out of bounds
