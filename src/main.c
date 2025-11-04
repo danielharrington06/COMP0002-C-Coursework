@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     // generate obstacles and markers
     generate_obstacles(arena, 0, O_NONE);
-    generate_markers(arena, 1, M_EDGE);
+    generate_markers(arena, 1, M_RANDOM);
     
     // render
     draw_background(arena);

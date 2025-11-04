@@ -36,7 +36,7 @@ static int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direc
     if (x >= arena->arenaWidth || y >= arena->arenaHeight) return 0;
 
     // check if empty
-    return arena->arenaGrid[y][x] == TILE_EMPTY;
+    return arena->arenaGrid[y][x] == T_EMPTY;
 }
 
 // this function generates obstacles randomly; pre-requisite: arenaGrid is completely empty
@@ -52,9 +52,9 @@ static void generate_obstacles_random(Arena *arena, int numObstacles)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != T_EMPTY);
 
-        arena->arenaGrid[y][x] = TILE_OBSTACLE;
+        arena->arenaGrid[y][x] = T_OBSTACLE;
     }
 }
 
@@ -71,16 +71,16 @@ static void generate_obstacles_clustered(Arena *arena, int numClusters)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != T_EMPTY);
 
-        arena->arenaGrid[y][x] = TILE_OBSTACLE;
+        arena->arenaGrid[y][x] = T_OBSTACLE;
 
         // spawn the others in the cluster
         int placed = 0; // keep track of how many have been placed
         int dir = (int)random_direction(); // get random direction to start at
         for (int i = 0; i < 4; i++) {
             if (is_tile_in_direction_free(arena, x, y, (Direction)dir)) {
-                arena->arenaGrid[y][x] = TILE_OBSTACLE;
+                arena->arenaGrid[y][x] = T_OBSTACLE;
                 placed++;
             }
             if (placed == 2) break; // clusters of up to 3
@@ -96,7 +96,7 @@ static void generate_obstacles_wall(Arena* arena, int numObstacles)
     int x = arena->arenaWidth/3;
 
     for (int i = 0; i < numObstacles; i++) {
-        arena->arenaGrid[x][arena->arenaHeight - 1 - i] = TILE_OBSTACLE;
+        arena->arenaGrid[x][arena->arenaHeight - 1 - i] = T_OBSTACLE;
     }
 }
 
@@ -111,8 +111,8 @@ static void generate_obstacles_cavern(Arena *arena)
     for (int x = 0; x < arena->arenaWidth; x++) {
         for (int y = 0; y < arena->arenaHeight; y++) {
             int distToCentre = pow(centreX-x, 2) + pow(centreY-y, 2);
-            if (distToCentre > radius) {
-                arena->arenaGrid[y][x] = TILE_OBSTACLE;
+            if (distToCentre >= radius) {
+                arena->arenaGrid[y][x] = T_OBSTACLE;
             }
         }
     }
@@ -137,8 +137,8 @@ void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation format
             generate_obstacles_cavern(arena);
             break;
         default:
-            printf("Formation was not a valid selection\n");
-            assert(0); // crash the code
+            fprintf(stderr, "Formation was not a valid selection\n");
+            exit(EXIT_FAILURE); // crash the code
             break;
     }
 }
@@ -163,9 +163,9 @@ static void generate_marker_edge(Arena *arena)
             if (r == 1) { x = arena->arenaWidth-1; y = pos; } // right
             if (r == 3) { x = 0; y = pos+1; } // left
         }
-    } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+    } while (arena->arenaGrid[y][x] != T_EMPTY);
 
-    arena->arenaGrid[y][x] = TILE_MARKER;
+    arena->arenaGrid[y][x] = T_MARKER;
 }
 
 static void generate_marker_anywhere(Arena *arena)
@@ -173,7 +173,7 @@ static void generate_marker_anywhere(Arena *arena)
     int x = rand() % arena->arenaWidth;
     int y = rand() % arena->arenaHeight;
 
-    arena->arenaGrid[y][x] = TILE_MARKER;
+    arena->arenaGrid[y][x] = T_MARKER;
 }
 
 // this function generates markers randomly; pre-requesite: obstacles have already been spawned
@@ -186,9 +186,9 @@ static void generate_markers_random(Arena *arena, int numMarkers)
         do {
             x = random_coord(arena->arenaWidth);
             y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+        } while (arena->arenaGrid[y][x] != T_EMPTY);
 
-        arena->arenaGrid[y][x] = TILE_MARKER;
+        arena->arenaGrid[y][x] = T_MARKER;
     }
 }
 
@@ -237,7 +237,7 @@ static void allocate_arena_grid(Arena *arena)
     for (int i = 0; i < height; i++) {
         arena->arenaGrid[i] = calloc(width, sizeof(ArenaTile));
         if (arena->arenaGrid[i] == NULL) {
-            printf("Failed to allocate memory for a row in arenaGrid\n");
+            fprintf(stderr, "Failed to allocate memory for a row in arenaGrid\n");
             // free already allocated memory
             for (int j = 0; j < i; j++) {
                 free(arena->arenaGrid[j]);
@@ -248,7 +248,7 @@ static void allocate_arena_grid(Arena *arena)
     }
 }
 
-// this function creates an arena struct; pre-requisite: arena dimensions already set
+// this function creates an arena struct; pre-requisite: arena dimensions already set; caller has responsibility to free
 Arena* create_arena(int width, int height)
 {
     // allocate memory

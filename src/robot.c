@@ -8,26 +8,48 @@
 #include "../lib/graphics.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
 
+// this function returns the coord of the point that is forward (which may be out of bounds); caller has responsibility to free
+static Coord* get_forward_coord(Robot *robot)
+{
+    // create a copy of x and y to return later 
+    Coord *coord = malloc(sizeof(coord));
+    coord->x = robot->x;
+    coord->y = robot->y;
+
+    // simulate the forward movement on coord in correct direction
+    switch(robot->direction) {
+        case(NORTH):
+            coord->y--;
+            break;
+        case(EAST):
+            coord->x++;
+            break;
+        case(SOUTH):
+            coord->y++;
+            break;
+        case(WEST):
+            coord->x--;
+    }
+
+    return coord;
+}
+
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
 static void forward(Robot *robot) 
 {
-    switch(robot->direction) {
-        case (NORTH):
-            robot->y--;
-            break;
-        case(EAST):
-            robot->x++;
-            break;
-        case(SOUTH):
-            robot->y++;
-            break;
-        case(WEST):
-            robot->x--;
+    Coord *coord = get_forward_coord(robot);
+    if (coord == NULL) {
+        fprintf(stderr, "get_forward_coord returned NULL pointer\n");
+        exit(EXIT_FAILURE);
     }
+    robot->x = coord->x;
+    robot->y = coord->y;
+    free(coord);
 }
 
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
@@ -45,44 +67,33 @@ static void turn_right(Robot *robot)
 // this function checks if the robot is at the marker
 static int is_at_marker(Robot *robot, Arena *arena) 
 {
-    return arena->arenaGrid[robot->y][robot->x] == TILE_MARKER;
+    return arena->arenaGrid[robot->y][robot->x] == T_MARKER;
 }
 
 // this function checks if the robot can move forward
 static int can_move_forward(Robot *robot, Arena *arena) 
 {
-    // store a copy of coords
-    Coord coord;
-    coord.x = robot->x;
-    coord.y = robot->y;
-
-    // simulate the forward movement on copied x and y
-    switch(robot->direction) {
-        case (NORTH):
-            coord.y--;
-            break;
-        case(EAST):
-            coord.x++;
-            break;
-        case(SOUTH):
-            coord.y++;
-            break;
-        case(WEST):
-            coord.x--;
+    Coord *coord = get_forward_coord(robot);
+    if (coord == NULL) {
+        fprintf(stderr, "can_move_forward returned NULL pointer\n");
+        exit(EXIT_FAILURE);
     }
 
     // check out of bounds
-    if (coord.x < 0 || coord.y < 0) return 0;
-    if (coord.x >= arena->arenaWidth || coord.y >= arena->arenaHeight) return 0;
+    if (coord->x < 0 || coord->y < 0) return 0;
+    if (coord->x >= arena->arenaWidth || coord->y >= arena->arenaHeight) return 0;
 
     // check if it hits an obstacle
-    return !(arena->arenaGrid[coord.y][coord.x] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
+    int obstacle_ahead = arena->arenaGrid[coord->y][coord->x] == T_OBSTACLE;
+    free(coord);
+
+    return !obstacle_ahead; // negate as function returns true if in bounds and not obstacle
 }
 
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
 static void pickup_marker(Robot *robot, Arena *arena) 
 {
-    arena->arenaGrid[robot->y][robot->x] = TILE_EMPTY;
+    arena->arenaGrid[robot->y][robot->x] = T_EMPTY;
     arena->numMarker--;
     robot->markerCount++;
 }
@@ -92,7 +103,7 @@ static void drop_marker(Robot *robot, Arena *arena)
 {
     robot->markerCount--;
     arena->numMarker++;
-    arena->arenaGrid[robot->y][robot->x] = TILE_MARKER;
+    arena->arenaGrid[robot->y][robot->x] = T_MARKER;
 }
 
 // this function returns the number of markers the robot is carrying
@@ -107,27 +118,13 @@ static int get_marker_arena_count(Arena *arena)
     return arena->numMarker;
 }
 
-// this function returns the coords of the tile to the robots left, returning NULL if out of bounds
+// this function returns the coords of the tile to the robots left, returning NULL if out of bounds; caller has responsibility to free
 static Coord* get_left_tile(Robot *robot)
 {
-    // store a copy of coords
-    Coord *coord;
-    coord->x = robot->x;
-    coord->y = robot->y;
-
-    // simulate the forward movement on copied x and y
-    switch(robot->direction) {
-        case (NORTH):
-            coord->y--;
-            break;
-        case(EAST):
-            coord->x++;
-            break;
-        case(SOUTH):
-            coord->y++;
-            break;
-        case(WEST):
-            coord->x--;
+    Coord *coord = get_forward_coord(robot);
+    if (coord == NULL) {
+        fprintf(stderr, "get_left_tile returned NULL pointer\n");
+        exit(EXIT_FAILURE);
     }
 
     // check out of bounds
@@ -140,7 +137,30 @@ static Coord* get_left_tile(Robot *robot)
 // this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
 static int check_left_tile_unvisited(Robot *robot, Coord *coord)
 {
-    return robot->memory[coord->y][coord->x] == ROBOT_UNKNOWN; // other options are visited and blocked, neither of which we want
+    return robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
+}
+
+// this function sets the current tile to visited in robot's memory
+static void mark_current_tile_visited(Robot *robot)
+{
+    robot->memory[robot->y][robot->x] = R_VISITED;
+}
+
+// this function marks the tile in front as obstacle if not out of bounds
+static void mark_ahead_tile_obstacle(Robot *robot)
+{
+    Coord *coord = get_forward_coord(robot);
+    if (coord == NULL) {
+        fprintf(stderr, "get_forward_coord returned NULL pointer\n");
+        return;
+    }
+
+    // check out of bounds
+    if (coord->x < 0 || coord->y < 0) return;
+    if (coord->x >= robot->arenaWidth || coord->y >= robot->arenaHeight) return;
+
+    robot->memory[coord->y][coord->x] = R_BLOCKED;
+    free(coord);
 }
 
 // functions to deal with robot struct:
@@ -155,7 +175,7 @@ static void allocate_robots_memory(Robot *robot)
     // allocate memory for row pointers
     robot->memory = calloc(height, sizeof(RobotTile *));
     if (robot->memory == NULL) {
-        printf("Failed to allocate memory for robot memory row pointers\n");
+        fprintf(stderr, "Failed to allocate memory for robot memory row pointers\n");
         exit(EXIT_FAILURE);
     }
 
@@ -163,7 +183,7 @@ static void allocate_robots_memory(Robot *robot)
     for (int i = 0; i < height; i++) {
         robot->memory[i] = calloc(width, sizeof(RobotTile));
         if (robot->memory[i] == NULL) {
-            printf("Failed to allocate memory for a row in robot memory\n");
+            fprintf(stderr, "Failed to allocate memory for a row in robot memory\n");
             // free already allocated memory
             for (int j = 0; j < i; j++) {
                 free(robot->memory[j]);
@@ -174,7 +194,7 @@ static void allocate_robots_memory(Robot *robot)
     }
 }
 
-// this function creates a robot struct; pre-requisite: arena dimensions already set
+// this function creates a robot struct; pre-requisite: arena dimensions already set; caller has responsibility to free
 Robot* create_robot(Arena *arena)
 {
     // allocate memory
@@ -222,10 +242,10 @@ static void place_robot_random(Robot *robot, Arena *arena)
         // add 1 and -2 is used to not place robot at edge
         x = 1 + random_coord(robot->arenaWidth-2);
         y = 1 + random_coord(robot->arenaHeight-2);
-    } while (arena->arenaGrid[y][x] != TILE_EMPTY);
+    } while (arena->arenaGrid[y][x] != T_EMPTY);
 
     // assign this as robot start on arena 
-    arena->arenaGrid[y][x] = TILE_ROBOT_START;
+    arena->arenaGrid[y][x] = T_R_START;
     
     // assign values to robot
     robot->x = x;
@@ -237,13 +257,13 @@ static void place_robot_random(Robot *robot, Arena *arena)
 static void place_robot_specific(Robot *robot, Arena *arena, int x, int y, Direction direction)
 {
     // if the entered position is taken, place the robot randomly
-    if (arena->arenaGrid[y][x] != TILE_EMPTY) {
+    if (arena->arenaGrid[y][x] != T_EMPTY) {
         place_robot_random(robot, arena);
         return;
     }
 
     // assign x, y as start on arena
-    arena->arenaGrid[y][x] = TILE_ROBOT_START;
+    arena->arenaGrid[y][x] = T_R_START;
 
     // assign values to robot
     robot->x = x;
@@ -280,9 +300,9 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
 
         // check out of bounds - if so, give random position and direction
         if (x < 0 || y < 0 || x >= robot->arenaWidth || y >= robot->arenaHeight) {
-                printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
-                place_robot_random(robot, arena);
-                return;
+            printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
+            place_robot_random(robot, arena);
+            return;
         }
 
         // check invalid direction - if so, give random direction, but we know x, y is in range

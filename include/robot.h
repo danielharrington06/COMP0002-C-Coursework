@@ -5,9 +5,9 @@
 #include "utils.h"
 
 typedef enum {
-    ROBOT_UNKNOWN = 0,
-    ROBOT_VISITED = 1,
-    ROBOT_BLOCKED = 2
+    R_UNKNOWN = 0,
+    R_VISITED = 1,
+    R_BLOCKED = 2
 } RobotTile;
 
 typedef struct {

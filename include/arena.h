@@ -4,10 +4,10 @@
 #include "utils.h"
 
 typedef enum {
-    TILE_EMPTY = 0,
-    TILE_OBSTACLE = 1,
-    TILE_MARKER = 2,
-    TILE_ROBOT_START = 3
+    T_EMPTY = 0,
+    T_OBSTACLE = 1,
+    T_MARKER = 2,
+    T_R_START = 3
 } ArenaTile;
 
 typedef struct {

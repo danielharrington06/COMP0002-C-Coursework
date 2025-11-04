@@ -6,6 +6,7 @@
 
 #include "../lib/graphics.h"
 
+#include <stdlib.h>
 #include <malloc.h>
 #include <math.h>
 
@@ -76,7 +77,7 @@ static void draw_obstacles(Arena *arena)
 {
     for (int y = 0; y < arena->arenaHeight; y++) {
         for (int x = 0; x < arena->arenaWidth; x++) {
-            if (arena->arenaGrid[y][x] == TILE_OBSTACLE) {
+            if (arena->arenaGrid[y][x] == T_OBSTACLE) {
                 draw_obstacle(x, y);
             }
         }
@@ -89,7 +90,8 @@ static Point* equ_triangle_coords(double triangle_circumrad)
     // a triangle's circumradius is the distance from the center to any vertex
     Point *vertices = malloc(3 * sizeof(Point));
     if (vertices == NULL) {
-        return NULL;
+        fprintf(stderr, "Malloc returned null in equ_triangle_coords\n");
+        exit(EXIT_FAILURE);
     }
 
     vertices[0].x = triangle_circumrad*cos(PI/2);
@@ -164,8 +166,8 @@ static void draw_robot(Robot *robot)
     // generate vertices
     Point* vertices = equ_triangle_coords(triangle_circumrad);
     if (vertices == NULL) {
-        printf("Malloc returned null in equ_triangle_coords\n");
-        return;
+        fprintf(stderr, "Malloc returned null in equ_triangle_coords\n");
+        exit(EXIT_FAILURE);
     }
 
     // rotate to match robot's direction
@@ -195,7 +197,7 @@ static void draw_markers(Arena *arena)
 {
     for (int y = 0; y < arena->arenaHeight; y++) {
         for (int x = 0; x < arena->arenaWidth; x++) {
-            if (arena->arenaGrid[y][x] == TILE_MARKER) {
+            if (arena->arenaGrid[y][x] == T_MARKER) {
                 draw_marker(x, y);
             }
         }
