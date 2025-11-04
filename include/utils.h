@@ -6,6 +6,11 @@ typedef struct {
     double y;
 } Point;
 
+typedef struct {
+    int x;
+    int y;
+} Coord;
+
 typedef enum {
     NORTH = 0,
     EAST = 1,

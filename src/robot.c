@@ -51,31 +51,32 @@ static int is_at_marker(Robot *robot, Arena *arena)
 // this function checks if the robot can move forward
 static int can_move_forward(Robot *robot, Arena *arena) 
 {
-    // store a copy of x and y
-    int x = robot->x;
-    int y = robot->y;
+    // store a copy of coords
+    Coord coord;
+    coord.x = robot->x;
+    coord.y = robot->y;
 
     // simulate the forward movement on copied x and y
     switch(robot->direction) {
         case (NORTH):
-            y--;
+            coord.y--;
             break;
         case(EAST):
-            x++;
+            coord.x++;
             break;
         case(SOUTH):
-            y++;
+            coord.y++;
             break;
         case(WEST):
-            x--;
+            coord.x--;
     }
 
     // check out of bounds
-    if (x < 0 || y < 0) return 0;
-    if (x >= arena->arenaWidth || y >= arena->arenaHeight) return 0;
+    if (coord.x < 0 || coord.y < 0) return 0;
+    if (coord.x >= arena->arenaWidth || coord.y >= arena->arenaHeight) return 0;
 
     // check if it hits an obstacle
-    return !(arena->arenaGrid[y][x] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
+    return !(arena->arenaGrid[coord.y][coord.x] == TILE_OBSTACLE); //negate as comparison is checking if it is obstacle
 }
 
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
@@ -104,6 +105,42 @@ static int get_marker_carry_count(Robot *robot)
 static int get_marker_arena_count(Arena *arena) 
 {
     return arena->numMarker;
+}
+
+// this function returns the coords of the tile to the robots left, returning NULL if out of bounds
+static Coord* get_left_tile(Robot *robot)
+{
+    // store a copy of coords
+    Coord *coord;
+    coord->x = robot->x;
+    coord->y = robot->y;
+
+    // simulate the forward movement on copied x and y
+    switch(robot->direction) {
+        case (NORTH):
+            coord->y--;
+            break;
+        case(EAST):
+            coord->x++;
+            break;
+        case(SOUTH):
+            coord->y++;
+            break;
+        case(WEST):
+            coord->x--;
+    }
+
+    // check out of bounds
+    if (coord->x < 0 || coord->y < 0) return NULL;
+    if (coord->x >= robot->arenaWidth || coord->y >= robot->arenaHeight) return NULL;
+    
+    return coord;
+}
+
+// this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
+static int check_left_tile_unvisited(Robot *robot, Coord *coord)
+{
+    return robot->memory[coord->y][coord->x] == ROBOT_UNKNOWN; // other options are visited and blocked, neither of which we want
 }
 
 // functions to deal with robot struct:
