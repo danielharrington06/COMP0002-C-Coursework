@@ -39,6 +39,32 @@ static Coord* get_forward_coord(Robot *robot)
     return coord;
 }
 
+// this function returns the coord of the point that is left (which may be out of bounds); caller has responsibility to free
+static Coord* get_left_coord(Robot *robot)
+{
+    // create a copy of x and y to return later 
+    Coord *coord = malloc(sizeof(coord));
+    coord->x = robot->x;
+    coord->y = robot->y;
+
+    // simulate the forward movement on coord in correct direction
+    switch(robot->direction) {
+        case(NORTH):
+            coord->y--;
+            break;
+        case(EAST):
+            coord->x++;
+            break;
+        case(SOUTH):
+            coord->y++;
+            break;
+        case(WEST):
+            coord->x--;
+    }
+
+    return coord;
+}
+
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
 static void forward(Robot *robot) 
 {
@@ -80,8 +106,7 @@ static int can_move_forward(Robot *robot, Arena *arena)
     }
 
     // check out of bounds
-    if (coord->x < 0 || coord->y < 0) return 0;
-    if (coord->x >= arena->arenaWidth || coord->y >= arena->arenaHeight) return 0;
+    if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
 
     // check if it hits an obstacle
     int obstacle_ahead = arena->arenaGrid[coord->y][coord->x] == T_OBSTACLE;
@@ -118,25 +143,10 @@ static int get_marker_arena_count(Arena *arena)
     return arena->numMarker;
 }
 
-// this function returns the coords of the tile to the robots left, returning NULL if out of bounds; caller has responsibility to free
-static Coord* get_left_tile(Robot *robot)
-{
-    Coord *coord = get_forward_coord(robot);
-    if (coord == NULL) {
-        fprintf(stderr, "get_left_tile returned NULL pointer\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // check out of bounds
-    if (coord->x < 0 || coord->y < 0) return NULL;
-    if (coord->x >= robot->arenaWidth || coord->y >= robot->arenaHeight) return NULL;
-    
-    return coord;
-}
-
 // this function checks the robot's memory to see if the tile to its left is unvisited; pre-requisite: coord is a valid (in bounds) coordinate
-static int check_left_tile_unvisited(Robot *robot, Coord *coord)
+static int check_left_tile_unknown(Robot *robot)
 {
+    Coord *coord = get_left_coord(robot);
     return robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
 }
 
@@ -156,8 +166,7 @@ static void mark_ahead_tile_obstacle(Robot *robot)
     }
 
     // check out of bounds
-    if (coord->x < 0 || coord->y < 0) return;
-    if (coord->x >= robot->arenaWidth || coord->y >= robot->arenaHeight) return;
+    if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return;
 
     robot->memory[coord->y][coord->x] = R_BLOCKED;
     free(coord);
@@ -254,20 +263,20 @@ static void place_robot_random(Robot *robot, Arena *arena)
 }
 
 // this function places the robot with a specific 
-static void place_robot_specific(Robot *robot, Arena *arena, int x, int y, Direction direction)
+static void place_robot_specific(Robot *robot, Arena *arena, Coord coord, Direction direction)
 {
     // if the entered position is taken, place the robot randomly
-    if (arena->arenaGrid[y][x] != T_EMPTY) {
+    if (arena->arenaGrid[coord.y][coord.x] != T_EMPTY) {
         place_robot_random(robot, arena);
         return;
     }
 
     // assign x, y as start on arena
-    arena->arenaGrid[y][x] = T_R_START;
+    arena->arenaGrid[coord.y][coord.x] = T_R_START;
 
     // assign values to robot
-    robot->x = x;
-    robot->y = y;
+    robot->x = coord.x;
+    robot->y = coord.y;
     robot->direction = direction;
 }
 
@@ -294,12 +303,13 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
 {
     // specific position
     if (argc == 6) {
-        int x = atoi(argv[3]);
-        int y = atoi(argv[4]);
+        Coord coord;
+        coord.x = atoi(argv[3]);
+        coord.y = atoi(argv[4]);
         Direction direction = parse_direction(argv[5]);
 
         // check out of bounds - if so, give random position and direction
-        if (x < 0 || y < 0 || x >= robot->arenaWidth || y >= robot->arenaHeight) {
+        if (!check_coord_in_bounds(&coord, robot->arenaWidth, robot->arenaHeight)) {
             printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
             place_robot_random(robot, arena);
             return;
@@ -308,12 +318,12 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
         // check invalid direction - if so, give random direction, but we know x, y is in range
         if (direction == -1) {
             printf("Error: direction must be north, east, south, west. Random direction generated.\n");
-            place_robot_specific(robot, arena, x, y, random_direction());
+            place_robot_specific(robot, arena, coord, random_direction());
             return;
         }
 
         // valid x, y, direction
-        place_robot_specific(robot, arena, x, y, direction);
+        place_robot_specific(robot, arena, coord, direction);
         return;
     }
 

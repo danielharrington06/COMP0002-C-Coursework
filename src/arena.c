@@ -14,29 +14,28 @@
 #include <math.h>
 
 // this function determines if the tile relative to (x, y) in direction direction is empty
-static int is_tile_in_direction_free(Arena *arena, int x, int y, Direction direction)
+static int is_tile_in_direction_free(Arena *arena, Coord coord, Direction direction)
 {
     switch(direction) {
         case(NORTH):
-            y--;
+            coord.y--;
             break;
         case(EAST):
-            x++;
+            coord.x++;
             break;
         case(SOUTH):
-            y++;
+            coord.y++;
             break;
         case(WEST):
-            x--;
+            coord.x--;
             break;
     }
     
     // check out of bounds
-    if (x < 0 || y < 0) return 0;
-    if (x >= arena->arenaWidth || y >= arena->arenaHeight) return 0;
+    if (!check_coord_in_bounds(&coord, arena->arenaWidth, arena->arenaHeight)) return 0;
 
     // check if empty
-    return arena->arenaGrid[y][x] == T_EMPTY;
+    return arena->arenaGrid[coord.y][coord.x] == T_EMPTY;
 }
 
 // this function generates obstacles randomly; pre-requisite: arenaGrid is completely empty
@@ -67,20 +66,20 @@ static void generate_obstacles_clustered(Arena *arena, int numClusters)
     // theoretically could become an infinite loop, but in reality unlikely to if only filling half the grid
     for (int i = 0; i < numClusters; i++) {
         // generate (x, y) until (x, y) is an empty tile
-        int x, y;
+        Coord coord;
         do {
-            x = random_coord(arena->arenaWidth);
-            y = random_coord(arena->arenaHeight);
-        } while (arena->arenaGrid[y][x] != T_EMPTY);
+            coord.x = random_coord(arena->arenaWidth);
+            coord.y = random_coord(arena->arenaHeight);
+        } while (arena->arenaGrid[coord.y][coord.x] != T_EMPTY);
 
-        arena->arenaGrid[y][x] = T_OBSTACLE;
+        arena->arenaGrid[coord.y][coord.x] = T_OBSTACLE;
 
         // spawn the others in the cluster
         int placed = 0; // keep track of how many have been placed
         int dir = (int)random_direction(); // get random direction to start at
         for (int i = 0; i < 4; i++) {
-            if (is_tile_in_direction_free(arena, x, y, (Direction)dir)) {
-                arena->arenaGrid[y][x] = T_OBSTACLE;
+            if (is_tile_in_direction_free(arena, coord, (Direction)dir)) {
+                arena->arenaGrid[coord.y][coord.x] = T_OBSTACLE;
                 placed++;
             }
             if (placed == 2) break; // clusters of up to 3

@@ -22,5 +22,6 @@ Direction random_direction();
 int random_coord(int);
 int min(int, int);
 int max(int, int);
+int check_coord_in_bounds(Coord*, int, int);
 
 #endif

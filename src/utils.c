@@ -1,5 +1,6 @@
 // This function contains utility functions used by numerous programs
 #include "../include/utils.h"
+#include "../include/robot.h"
 
 #include <stdlib.h>
 
@@ -27,4 +28,14 @@ int max(int a, int b)
 {
     if (a > b) return a;
     return b;
+}
+
+// this function checks that a coordinate is in bounds of the grid, returning 1 if in bounds and 0 if out of bounds; coord, width, height
+int check_coord_in_bounds(Coord *coord, int width, int height)
+{
+    // check out of bounds
+    if (coord->x < 0 || coord->y < 0) return 0;
+    if (coord->x >= width || coord->y >= height) return 0;
+
+    return 1;
 }
