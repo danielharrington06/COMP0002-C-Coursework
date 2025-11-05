@@ -441,3 +441,11 @@ void find_markers(Robot *robot, Arena *arena)
         check_for_and_pickup_marker(robot, arena);
     }
 }
+
+
+/* 
+big idea: store a list of the route that has been travelled - backtrack along this until adjacent to necessary tile
+when single wall: go towards nearest unvisited, backtracking the entire loop by checking if the node is in there and 
+popping off the list of nodes as far as needed until an obstacle is hit, at which point follow backtrack until the
+direction the program would go can be travelled to
+*/
