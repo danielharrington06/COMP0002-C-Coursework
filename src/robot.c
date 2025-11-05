@@ -12,6 +12,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <malloc.h>
+#include <math.h>
 
 // this function returns the coord of the point that is forward (which may be out of bounds); caller has responsibility to free
 static Coord* get_forward_coord(Robot *robot)
@@ -208,6 +209,55 @@ static void check_for_and_pickup_marker(Robot *robot, Arena *arena)
     }
 }
 
+// this function counts the number of unknown tiles in the arena
+int num_unknown_tiles(Robot *robot)
+{
+    int count = 0;
+    for (int y = 0; y < robot->arenaHeight; y++) {
+        for (int x = 0; x < robot->arenaWidth; x++) {
+            if (robot->memory[y][x] == R_UNKNOWN) count++;
+        }
+    }
+    return count;
+}
+
+// this function returns the coordinates of the nearest unvisited tile; pre-requisite: num unknown tiles > 0
+static Coord* get_nearest_unknown_tile(Robot *robot)
+{
+    // set minDistSqr to height^2 + width^2 as this is greater than the great
+    double minDistSqr = pow(robot->arenaHeight, 2) + pow(robot->arenaWidth, 2);
+    Coord *closestCoord = malloc(sizeof(Coord));
+    closestCoord->x = -1;
+    closestCoord->y = -1;
+
+    for (int y = 0; y < robot->arenaHeight; y++) {
+        for (int x = 0; x < robot->arenaWidth; x++) {
+            double dist = calc_squared_dist_coords(robot->x, robot->y, x, y);
+            if (dist < minDistSqr) {
+                minDistSqr = dist;
+                closestCoord->x = x;
+                closestCoord->y = y;
+            }
+        }
+    }
+
+    // return NULL for out of bounds coords (not set) - this should never occur
+    if (!check_coord_in_bounds(closestCoord, robot->arenaWidth, robot->arenaHeight)) {
+        fprintf(stderr, "get_nearest_unknown_tile found no unvisited tile\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return closestCoord;
+}
+
+// this function moves the robot from its current position to the target coordinate
+//.. the nature of the spiral method is such that the nearest unvisited node will 
+//.. always be reachable by travelling over already visited routes
+static void move_to_coord(Robot *robot, Arena *arena, Coord target)
+{
+
+}
+
 // functions to deal with robot struct:
 
 // this function allocates memory for robot's memory
@@ -392,11 +442,14 @@ void find_markers(Robot *robot, Arena *arena)
         if (check_left_tile_unknown(robot)) {
             turn_left(robot);
         }
-        else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) {
+        else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { // ahead in bounds and R_UNKNOWN
             mark_current_tile_visited(robot);
             forward(robot);
         }
-        else {
+        else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { // ahead in bounds and R_VISITED
+            turn_right(robot);
+        }
+        else { // out of bounds or R_BLOCKED
             mark_ahead_tile_obstacle(robot);
             turn_right(robot);
         }

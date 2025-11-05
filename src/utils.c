@@ -3,6 +3,7 @@
 #include "../include/robot.h"
 
 #include <stdlib.h>
+#include <math.h>
 
 //  this function generates a random Direction from robot.c to use to generate a cluster
 Direction random_direction()
@@ -38,4 +39,10 @@ int check_coord_in_bounds(Coord *coord, int width, int height)
     if (coord->x >= width || coord->y >= height) return 0;
 
     return 1;
+}
+
+// this function calculates the squared distance between two coordinates; x1, y1, x2, y2
+double calc_squared_dist_coords(int x1, int y1, int x2, int y2)
+{
+    return pow(x1 - x2, 2) + pow(y1 - y2, 2);
 }
