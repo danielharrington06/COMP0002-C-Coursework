@@ -14,8 +14,8 @@
 #include <malloc.h>
 #include <math.h>
 
-// this function returns the coord of the point that is forward (which may be out of bounds); caller has responsibility to free
-static Coord* get_forward_coord(Robot *robot)
+// this function returns the coord of the point that is in the direction specified (this can be adjusted to work for non forward directions by offsetting robot->direction) (which may be out of bounds); caller has responsibility to free
+static Coord* get_coord_in_direction(Robot *robot, Direction direction)
 {
     // create a copy of x and y to return later 
     Coord *coord = malloc(sizeof(coord));
@@ -23,7 +23,7 @@ static Coord* get_forward_coord(Robot *robot)
     coord->y = robot->y;
 
     // simulate the forward movement on coord in correct direction
-    switch(robot->direction) {
+    switch(direction) {
         case(NORTH):
             coord->y--;
             break;
@@ -35,32 +35,6 @@ static Coord* get_forward_coord(Robot *robot)
             break;
         case(WEST):
             coord->x--;
-    }
-
-    return coord;
-}
-
-// this function returns the coord of the point that is left (which may be out of bounds); caller has responsibility to free
-static Coord* get_left_coord(Robot *robot)
-{
-    // create a copy of x and y to return later 
-    Coord *coord = malloc(sizeof(coord));
-    coord->x = robot->x;
-    coord->y = robot->y;
-
-    // simulate the leftward movement on coord in correct direction
-    switch(robot->direction) {
-        case(NORTH):
-            coord->x--;
-            break;
-        case(EAST):
-            coord->y--;
-            break;
-        case(SOUTH):
-            coord->x++;
-            break;
-        case(WEST):
-            coord->y++;
     }
 
     return coord;
@@ -69,9 +43,9 @@ static Coord* get_left_coord(Robot *robot)
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
 static void forward(Robot *robot) 
 {
-    Coord *coord = get_forward_coord(robot);
+    Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
-        fprintf(stderr, "get_forward_coord returned NULL pointer\n");
+        fprintf(stderr, "Malloc failed in forward\n");
         exit(EXIT_FAILURE);
     }
     robot->x = coord->x;
@@ -100,9 +74,9 @@ static int is_at_marker(Robot *robot, Arena *arena)
 // this function checks if the robot can move forward
 static int can_move_forward(Robot *robot, Arena *arena) 
 {
-    Coord *coord = get_forward_coord(robot);
+    Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
-        fprintf(stderr, "can_move_forward returned NULL pointer\n");
+        fprintf(stderr, "Malloc failed in can_move_forward\n");
         exit(EXIT_FAILURE);
     }
 
@@ -147,9 +121,9 @@ static int get_marker_arena_count(Arena *arena)
 // this function checks the robot's memory to see if the tile ahead is unknown (and reachable)
 static int check_forward_tile_unknown(Robot *robot)
 {
-    Coord *coord = get_forward_coord(robot);
+    Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
-        fprintf(stderr, "check_forward_tile_unknown returned NULL pointer\n");
+        fprintf(stderr, "Malloc failed in check_forward_tile_unknown\n");
         exit(EXIT_FAILURE);
     }
     
@@ -164,9 +138,9 @@ static int check_forward_tile_unknown(Robot *robot)
 // this function checks the robot's memory to see if the tile to its left is unknown (and reachable)
 static int check_left_tile_unknown(Robot *robot)
 {
-    Coord *coord = get_left_coord(robot);
+    Coord *coord = get_coord_in_direction(robot, (robot->direction - 1) % 4);
     if (coord == NULL) {
-        fprintf(stderr, "check_left_tile_unknown returned NULL pointer\n");
+        fprintf(stderr, "Malloc failed in check_left_tile_unknown\n");
         exit(EXIT_FAILURE);
     }
     
@@ -187,9 +161,9 @@ static void mark_current_tile_visited(Robot *robot)
 // this function marks the tile in front as obstacle if not out of bounds
 static void mark_ahead_tile_obstacle(Robot *robot)
 {
-    Coord *coord = get_forward_coord(robot);
+    Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
-        fprintf(stderr, "get_forward_coord returned NULL pointer\n");
+        fprintf(stderr, "Malloc failed in mark_ahead_tile_obstacke\n");
         exit(EXIT_FAILURE);
     }
 
@@ -207,6 +181,15 @@ static void check_for_and_pickup_marker(Robot *robot, Arena *arena)
         pickup_marker(robot, arena);
         draw_foreground(robot, arena);
     }
+}
+
+// this function checks if the robot is surrounded by visited tiles and is trapped in the spiral algorithm
+int is_surrounded_by_visited(Robot *robot)
+{
+    return get_coord_in_direction(robot, NORTH) && 
+    get_coord_in_direction(robot, EAST) && 
+    get_coord_in_direction(robot, SOUTH) && 
+    get_coord_in_direction(robot, WEST);
 }
 
 // this function counts the number of unknown tiles in the arena
