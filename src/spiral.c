@@ -177,6 +177,7 @@ static void backtrack_step(Robot *robot, Arena *arena, Stack *path)
     Coord prevTile = backtrack_path_tile(path);
     Direction dirOfPrevTile = direction_of_adj_tile(robot, prevTile);
     rotate_to_direction(robot, arena, dirOfPrevTile);
+    draw_foreground(robot, arena);
     forward(robot); // should not push position to path as currently at that position
     draw_foreground(robot, arena);
 }
@@ -187,8 +188,10 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
     Direction dir = direction_of_adj_tile(robot, unvisitedTile);
     rotate_to_direction(robot, arena, dir);
+    draw_foreground(robot, arena);
     if (can_move_forward(robot, arena)) {
         forward(robot);
+        mark_current_tile_visited(robot);
         push_pos_to_path(robot, path);
         draw_foreground(robot, arena);
         fprintf(stderr, "Backtrack succesful\n"); // !! remove later

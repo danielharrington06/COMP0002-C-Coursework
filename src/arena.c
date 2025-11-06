@@ -95,7 +95,7 @@ static void generate_obstacles_wall(Arena* arena, int numObstacles)
     int x = arena->arenaWidth/3;
 
     for (int i = 0; i < numObstacles; i++) {
-        arena->arenaGrid[x][arena->arenaHeight - 1 - i] = T_OBSTACLE;
+        arena->arenaGrid[arena->arenaHeight - 1 - i][x] = T_OBSTACLE;
     }
 }
 

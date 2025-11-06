@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
     place_robot(argc, argv, robot, arena);
 
     // generate obstacles and markers
-    generate_obstacles(arena, 1, O_RANDOM);
-    generate_markers(arena, 1, M_RANDOM);
+    generate_obstacles(arena, 8, O_SINGLE_WALL);
+    generate_markers(arena, 3, M_RANDOM);
     
     // render
     draw_background(arena);
