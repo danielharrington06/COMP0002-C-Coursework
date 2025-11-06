@@ -39,7 +39,6 @@ static Direction direction_of_adj_tile(Robot *robot, Coord tile)
 {
     int dx = tile.x - robot->x;
     int dy = tile.y - robot->y;
-    fprintf(stderr, "dx: %d dy: %d\n", dx, dy);
     if (dx == 1) {
         return EAST;
     }
@@ -187,12 +186,12 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
 {
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
     Direction dir = direction_of_adj_tile(robot, unvisitedTile);
-    fprintf(stderr, "direction of tile: %d\n", (int)dir);
     rotate_to_direction(robot, arena, dir);
     if (can_move_forward(robot, arena)) {
         forward(robot);
         push_pos_to_path(robot, path);
         draw_foreground(robot, arena);
+        fprintf(stderr, "Backtrack succesful\n"); // !! remove later
         return 1;
     }
     return 0;
@@ -208,7 +207,7 @@ void find_markers(Robot *robot, Arena *arena)
     // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
     while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
     { 
-        while (!is_surrounded_by_visited(robot) && get_marker_arena_count(arena) > 0)
+        while (!is_surrounded_by_known(robot) && get_marker_arena_count(arena) > 0)
         {
             spiral_step(robot, arena, path);
         }
@@ -216,7 +215,7 @@ void find_markers(Robot *robot, Arena *arena)
         int on_unknown_tile = 0;
         while (!on_unknown_tile && get_marker_arena_count(arena) > 0)
         {
-            while (is_surrounded_by_visited(robot) && get_marker_arena_count(arena) > 0)
+            while (is_surrounded_by_known(robot) && get_marker_arena_count(arena) > 0)
             {
                 backtrack_step(robot, arena, path);
             }

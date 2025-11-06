@@ -146,7 +146,7 @@ void mark_ahead_tile_obstacle(Robot *robot)
 }
 
 // this function checks if the robot is surrounded by visited tiles and is trapped in the spiral algorithm
-int is_surrounded_by_visited(Robot *robot)
+int is_surrounded_by_known(Robot *robot)
 {
     Coord n = get_coord_in_direction(robot, NORTH);
     Coord e = get_coord_in_direction(robot, EAST);    
@@ -158,10 +158,10 @@ int is_surrounded_by_visited(Robot *robot)
     int sVisited = 1;
     int wVisited = 1;
 
-    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = robot->memory[n.y][n.x] == R_VISITED;
-    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = robot->memory[e.y][e.x] == R_VISITED;
-    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = robot->memory[s.y][s.x] == R_VISITED;
-    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = robot->memory[w.y][w.x] == R_VISITED;
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = (robot->memory[n.y][n.x] == R_VISITED || robot->memory[n.y][n.x] == R_BLOCKED);
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = (robot->memory[e.y][e.x] == R_VISITED || robot->memory[e.y][e.x] == R_BLOCKED);
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = (robot->memory[s.y][s.x] == R_VISITED || robot->memory[s.y][s.x] == R_BLOCKED);
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = (robot->memory[w.y][w.x] == R_VISITED || robot->memory[w.y][w.x] == R_BLOCKED);
 
     return nVisited && eVisited && sVisited && wVisited;
 

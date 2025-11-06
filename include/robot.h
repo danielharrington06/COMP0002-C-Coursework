@@ -35,7 +35,7 @@ int check_forward_tile_unknown(Robot*);
 int check_left_tile_unknown(Robot*);
 void mark_current_tile_visited(Robot*);
 void mark_ahead_tile_obstacle(Robot*);
-int is_surrounded_by_visited(Robot*);
+int is_surrounded_by_known(Robot*);
 Coord adjacent_unvisited_tile(Robot*);
 int num_unknown_tiles(Robot*);
 
