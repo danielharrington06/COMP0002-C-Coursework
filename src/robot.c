@@ -15,7 +15,7 @@
 #include <math.h>
 
 // this function returns the coord of the point that is in the direction specified (this can be adjusted to work for non forward directions by offsetting robot->direction) (which may be out of bounds); caller has responsibility to free
-static Coord* get_coord_in_direction(Robot *robot, Direction direction)
+Coord* get_coord_in_direction(Robot *robot, Direction direction)
 {
     // create a copy of x and y to return later 
     Coord *coord = malloc(sizeof(coord));
@@ -41,7 +41,7 @@ static Coord* get_coord_in_direction(Robot *robot, Direction direction)
 }
 
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
-static void forward(Robot *robot) 
+void forward(Robot *robot) 
 {
     Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
@@ -54,25 +54,25 @@ static void forward(Robot *robot)
 }
 
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
-static void turn_left(Robot *robot) 
+void turn_left(Robot *robot) 
 {
     robot->direction = (robot->direction + 3) % 4;
 }
 
 // this function rotates the robot 90 degrees clockwise (right 90 degree turn)
-static void turn_right(Robot *robot) 
+void turn_right(Robot *robot) 
 {
     robot->direction = (robot->direction + 1) % 4;
 }
 
 // this function checks if the robot is at the marker
-static int is_at_marker(Robot *robot, Arena *arena) 
+int is_at_marker(Robot *robot, Arena *arena) 
 {
     return arena->arenaGrid[robot->y][robot->x] == T_MARKER;
 }
 
 // this function checks if the robot can move forward
-static int can_move_forward(Robot *robot, Arena *arena) 
+int can_move_forward(Robot *robot, Arena *arena) 
 {
     Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
@@ -91,7 +91,7 @@ static int can_move_forward(Robot *robot, Arena *arena)
 }
 
 // this function removes a marker from the arena and adds it to the robot's collection; pre-requisite: is_at_marker() is true
-static void pickup_marker(Robot *robot, Arena *arena) 
+void pickup_marker(Robot *robot, Arena *arena) 
 {
     arena->arenaGrid[robot->y][robot->x] = T_EMPTY;
     arena->numMarker--;
@@ -99,7 +99,7 @@ static void pickup_marker(Robot *robot, Arena *arena)
 }
 
 // this function drops a marker onto the grid; pre-requesite: is_at_marker() is false
-static void drop_marker(Robot *robot, Arena *arena) 
+void drop_marker(Robot *robot, Arena *arena) 
 {
     robot->markerCount--;
     arena->numMarker++;
@@ -107,19 +107,19 @@ static void drop_marker(Robot *robot, Arena *arena)
 }
 
 // this function returns the number of markers the robot is carrying
-static int get_marker_carry_count(Robot *robot) 
+int get_marker_carry_count(Robot *robot) 
 {
     return robot->markerCount;
 }
 
 // this function returns the number of markers left on the grid
-static int get_marker_arena_count(Arena *arena) 
+int get_marker_arena_count(Arena *arena) 
 {
     return arena->numMarker;
 }
 
 // this function checks the robot's memory to see if the tile ahead is unknown (and reachable)
-static int check_forward_tile_unknown(Robot *robot)
+int check_forward_tile_unknown(Robot *robot)
 {
     Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {
@@ -136,7 +136,7 @@ static int check_forward_tile_unknown(Robot *robot)
 }
 
 // this function checks the robot's memory to see if the tile to its left is unknown (and reachable)
-static int check_left_tile_unknown(Robot *robot)
+int check_left_tile_unknown(Robot *robot)
 {
     Coord *coord = get_coord_in_direction(robot, (robot->direction - 1) % 4);
     if (coord == NULL) {
@@ -153,13 +153,13 @@ static int check_left_tile_unknown(Robot *robot)
 }
 
 // this function sets the current tile to visited in robot's memory
-static void mark_current_tile_visited(Robot *robot)
+void mark_current_tile_visited(Robot *robot)
 {
     robot->memory[robot->y][robot->x] = R_VISITED;
 }
 
 // this function marks the tile in front as obstacle if not out of bounds
-static void mark_ahead_tile_obstacle(Robot *robot)
+void mark_ahead_tile_obstacle(Robot *robot)
 {
     Coord *coord = get_coord_in_direction(robot, robot->direction);
     if (coord == NULL) {

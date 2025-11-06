@@ -1,10 +1,12 @@
 // This program contains the spiral algorithm the robot uses to visit all available tiles
 
+#include "../include/drawing.h"
 #include "../include/robot.h"
 #include "../include/spiral.h"
 
-#include "stdlib.h"
-#include "stdio.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 
 // main algorithm to find markers:
 
@@ -46,16 +48,8 @@ static Coord* get_nearest_unknown_tile(Robot *robot)
     return closestCoord;
 }
 
-// this function moves the robot from its current position to the target coordinate
-//.. the nature of the spiral method is such that the nearest unvisited node will 
-//.. always be reachable by travelling over already visited routes
-static void move_to_coord(Robot *robot, Arena *arena, Coord target)
-{
-
-}
-
-// this function moves forward until it reaches the edge of the arena or an obstacle and spirals inwards to find all markers
-void find_markers(Robot *robot, Arena *arena)
+// this function moves the robot to its starting position to facilitate spiral algorithm
+static void reach_spiral_start(Robot *robot, Arena *arena)
 {
     // draw starting position
     draw_foreground(robot, arena);
@@ -71,30 +65,62 @@ void find_markers(Robot *robot, Arena *arena)
 
     turn_right(robot);
     draw_foreground(robot, arena);
+}
+
+// this function spirals round, using a left hand to wall technique, moving in a section as needed
+static void spiral(Robot *robot, Arena *arena)
+{
+    if (check_left_tile_unknown(robot)) {
+        turn_left(robot);
+    }
+    else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { 
+        // ahead in bounds and tile is unknown
+        mark_current_tile_visited(robot);
+        forward(robot);
+    }
+    else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { 
+        // ahead in bounds but already visited
+        turn_right(robot);
+    }
+    else { 
+        // out of bounds or an obstacle
+        mark_ahead_tile_obstacle(robot);
+        turn_right(robot);
+    }
+
+    draw_foreground(robot, arena);
+    check_for_and_pickup_marker(robot, arena);
+}
+
+// this function backtracks, popping nodes from its route as long as it is called
+static void backtrack(Robot *robot, Arena *arena)
+{
+    
+}
+
+// this function moves forward until it reaches the edge of the arena or an obstacle and spirals inwards to find all markers
+void find_markers(Robot *robot, Arena *arena)
+{
+    reach_spiral_start(robot, arena);
 
     // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
     while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
     { 
-        if (check_left_tile_unknown(robot)) {
-            turn_left(robot);
+        while (!is_surrounded_by_visited(robot))
+        {
+            spiral(robot, arena);
         }
-        else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { // ahead in bounds and R_UNKNOWN
-            mark_current_tile_visited(robot);
-            forward(robot);
+        while (is_surrounded_by_visited(robot))
+        {
+            backtrack(robot, arena);
         }
-        else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { // ahead in bounds and R_VISITED
-            turn_right(robot);
-        }
-        else { // out of bounds or R_BLOCKED
-            mark_ahead_tile_obstacle(robot);
-            turn_right(robot);
-        }
-        draw_foreground(robot, arena);
 
-        check_for_and_pickup_marker(robot, arena);
     }
 }
 
+/*
+current plan: just store where has been and backtrack until reaching a position where the robot is not surrounded
+*/
 
 /* 
 big idea: store a list of the route that has been travelled - backtrack along this until adjacent to necessary tile
