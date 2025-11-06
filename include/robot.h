@@ -18,6 +18,7 @@ typedef struct {
     int arenaWidth;
     int arenaHeight;  
     RobotTile **memory;
+    Stack *path;
 } Robot;
 
 // functions to move the robot, sense its environemtn and deal with its memory of the arena
@@ -43,6 +44,11 @@ int num_unknown_tiles(Robot*);
 Robot* create_robot(Arena*);
 void free_robot(Robot*);
 void place_robot(int, char**, Robot*, Arena*);
+
+// functions for dealing with robot's path stack
+void setup_path_stack(Robot*);
+void push_pos_to_path(Robot*);
+Coord backtrack_path_tile(Robot*);
 
 // main algorithm to find markers
 void find_markers(Robot*, Arena*);

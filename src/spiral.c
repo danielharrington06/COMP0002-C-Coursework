@@ -10,30 +10,6 @@
 #include <math.h>
 #include <malloc.h>
 
-// functions to deal with the path using stack implementation from utils.h
-
-// this function creates the stack and pushes the current position (start to it)
-static Stack* setup_path_stack(Robot *robot)
-{
-    Stack* path = create_stack(robot->arenaWidth*robot->arenaHeight*2); // capacity assumes travelling over each tile
-    push(path, (Coord){robot->x, robot->y});
-
-    return path;
-}
-
-// this function pushes the current robot position to the stack
-static void push_pos_to_path(Robot *robot, Stack *path)
-{
-    push(path, (Coord){robot->x, robot->y});
-}
-
-// this function returns the Coord at the top of the stack
-static Coord backtrack_path_tile(Stack *path)
-{
-    pop(path);
-    return peek(path);
-}
-
 // this function gets the cardinal direction of an adjacent Coord tile; pre-requisite: tile is adjacent to robot
 static Direction direction_of_adj_tile(Robot *robot, Coord tile)
 {
@@ -125,7 +101,7 @@ static Coord get_nearest_unknown_tile(Robot *robot)
 }
 
 // this function moves the robot to its starting position to facilitate spiral algorithm
-static void reach_spiral_start(Robot *robot, Arena *arena, Stack *path)
+static void reach_spiral_start(Robot *robot, Arena *arena)
 {
     // draw starting position
     draw_foreground(robot, arena);
@@ -134,7 +110,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena, Stack *path)
     while (can_move_forward(robot, arena) && get_marker_arena_count(arena)) 
     {
         forward(robot);
-        push_pos_to_path(robot, path);
+        push_pos_to_path(robot);
         draw_foreground(robot, arena);
         
         check_for_and_pickup_marker(robot, arena);
@@ -146,7 +122,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena, Stack *path)
 }
 
 // this function spirals round, using a left hand to wall technique, moving in a section as needed
-static void spiral_step(Robot *robot, Arena *arena, Stack *path)
+static void spiral_step(Robot *robot, Arena *arena)
 {
     if (check_left_tile_unknown(robot)) {
         turn_left(robot);
@@ -155,7 +131,7 @@ static void spiral_step(Robot *robot, Arena *arena, Stack *path)
         // ahead in bounds and tile is unknown
         forward(robot);
         mark_current_tile_visited(robot);
-        push_pos_to_path(robot, path);
+        push_pos_to_path(robot);
     }
     else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { 
         // ahead in bounds but already visited
@@ -172,9 +148,9 @@ static void spiral_step(Robot *robot, Arena *arena, Stack *path)
 }
 
 // this function backtracks, popping nodes from its route as long as it is called
-static void backtrack_step(Robot *robot, Arena *arena, Stack *path)
+static void backtrack_step(Robot *robot, Arena *arena)
 {
-    Coord prevTile = backtrack_path_tile(path);
+    Coord prevTile = backtrack_path_tile(robot);
     Direction dirOfPrevTile = direction_of_adj_tile(robot, prevTile);
     rotate_to_direction(robot, arena, dirOfPrevTile);
     draw_foreground(robot, arena);
@@ -183,7 +159,7 @@ static void backtrack_step(Robot *robot, Arena *arena, Stack *path)
 }
 
 // this function attempts to move back onto an unknown tile
-static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
+static int move_onto_unknown_tile(Robot *robot, Arena *arena)
 {
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
     Direction dir = direction_of_adj_tile(robot, unvisitedTile);
@@ -192,7 +168,7 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
     if (can_move_forward(robot, arena)) {
         forward(robot);
         mark_current_tile_visited(robot);
-        push_pos_to_path(robot, path);
+        push_pos_to_path(robot);
         draw_foreground(robot, arena);
         fprintf(stderr, "Backtrack succesful\n"); // !! remove later
         return 1;
@@ -203,16 +179,16 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
 // this function moves forward until it reaches the edge of the arena or an obstacle and spirals inwards to find all markers
 void find_markers(Robot *robot, Arena *arena)
 {
-    Stack* path = setup_path_stack(robot);
+    setup_path_stack(robot);
 
-    reach_spiral_start(robot, arena, path);
+    reach_spiral_start(robot, arena);
 
     // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
     while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
     { 
         while (!is_surrounded_by_known(robot) && get_marker_arena_count(arena) > 0)
         {
-            spiral_step(robot, arena, path);
+            spiral_step(robot, arena);
         }
 
         int on_unknown_tile = 0;
@@ -220,10 +196,10 @@ void find_markers(Robot *robot, Arena *arena)
         {
             while (is_surrounded_by_known(robot) && get_marker_arena_count(arena) > 0)
             {
-                backtrack_step(robot, arena, path);
+                backtrack_step(robot, arena);
             }
 
-            on_unknown_tile = move_onto_unknown_tile(robot, arena, path);
+            on_unknown_tile = move_onto_unknown_tile(robot, arena);
         }
     }
 }

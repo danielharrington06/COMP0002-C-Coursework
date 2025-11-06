@@ -29,20 +29,20 @@ int main(int argc, char *argv[])
 
 // start
 
+    generate_obstacles(arena, 10, O_SINGLE_WALL);
+
     // use command line arguments to place robot correctly
     place_robot(argc, argv, robot, arena);
 
-    // generate obstacles and markers
-    generate_obstacles(arena, 8, O_SINGLE_WALL);
     generate_markers(arena, 3, M_RANDOM);
     
-    // render
+    // render background
     draw_background(arena);
-    sleep(500);
+    sleep(1000);
 
 // loop
     foreground();
-    find_markers(robot, arena);
+    find_markers(robot, arena); // using spiral method
 
 // end
     free_robot(robot);

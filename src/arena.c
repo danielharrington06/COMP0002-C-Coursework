@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <math.h>
 
 // this function determines if the tile relative to (x, y) in direction direction is empty
@@ -42,8 +41,10 @@ static int is_tile_in_direction_free(Arena *arena, Coord coord, Direction direct
 static void generate_obstacles_random(Arena *arena, int numObstacles) 
 {
     // make sure we aren't trying to place more obstacles than half the grid
-    assert(numObstacles < arena->arenaWidth*arena->arenaHeight/2);
-
+    if (numObstacles >= arena->arenaWidth*arena->arenaHeight/2) {
+        fprintf(stderr, "Number of obstacles cannot exceed 1/2 the grid.\n");
+        exit(EXIT_FAILURE);
+    }
     // theoretically could become an infinite loop, but in reality unlikely to if only filling half the grid
     for (int i = 0; i < numObstacles; i++) {
         // generate (x, y) until (x, y) is an empty tile
@@ -61,7 +62,10 @@ static void generate_obstacles_random(Arena *arena, int numObstacles)
 static void generate_obstacles_clustered(Arena *arena, int numClusters)
 {
     // make sure we aren't trying to place more obstacles than half the grid
-    assert(numClusters < arena->arenaWidth*arena->arenaHeight/(2*3));
+    if (numClusters >= arena->arenaWidth*arena->arenaHeight/(2*3)) {
+        fprintf(stderr, "Number of clusters (where each cluster is 3 obstacles) cannot exceed 1/6 number of tiles.\n");
+        exit(EXIT_FAILURE);
+    }
 
     // theoretically could become an infinite loop, but in reality unlikely to if only filling half the grid
     for (int i = 0; i < numClusters; i++) {
@@ -90,7 +94,10 @@ static void generate_obstacles_clustered(Arena *arena, int numClusters)
 // this function generates a vertical wall from the bottom of the screen to near the top with a length specified; pre-requisite: arenaGrid is completely empty
 static void generate_obstacles_wall(Arena* arena, int numObstacles)
 {
-    assert(numObstacles < arena->arenaHeight);
+    if (numObstacles >= arena->arenaHeight) {
+        fprintf(stderr, "For a single wall, the number of obstacles must be less than the arena height\n");
+        exit(EXIT_FAILURE);
+    }
 
     int x = arena->arenaWidth/3;
 
@@ -208,8 +215,8 @@ void generate_markers(Arena *arena, int numMarkers, MarkerFormation formation)
             arena->numMarker = numMarkers;
             break;
         default:
-            printf("Formation was not a valid selection\n");
-            assert(0);
+            fprintf(stderr, "Formation was not a valid selection\n");
+            exit(EXIT_FAILURE);
             break;
     }
 }

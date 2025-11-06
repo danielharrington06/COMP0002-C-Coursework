@@ -244,7 +244,6 @@ Robot* create_robot(Arena *arena)
     robot->arenaWidth = arena->arenaWidth;
     robot->arenaHeight = arena->arenaHeight;
 
-    // allocate robot's memory
     allocate_robots_memory(robot);
 
     return robot;
@@ -266,6 +265,30 @@ void free_robot(Robot *robot)
     free(robot);
 }
 
+// functions to deal with the path using stack implementation from utils.h
+
+// this function creates the stack and pushes the current position (start to it)
+void setup_path_stack(Robot *robot)
+{
+    robot->path = create_stack(robot->arenaWidth*robot->arenaHeight+8); // capacity assumes travelling over each tile
+    push(robot->path, (Coord){robot->x, robot->y});
+}
+
+// this function pushes the current robot position to the stack
+void push_pos_to_path(Robot *robot)
+{
+    push(robot->path, (Coord){robot->x, robot->y});
+}
+
+// this function returns the Coord at the top of the stack
+Coord backtrack_path_tile(Robot *robot)
+{
+    pop(robot->path);
+    return peek(robot->path);
+}
+
+// functions for placing the robot at the start of the program
+
 // this function randomly assigns the robot to a position in the arena
 static void place_robot_random(Robot *robot, Arena *arena)
 {
@@ -284,6 +307,8 @@ static void place_robot_random(Robot *robot, Arena *arena)
     robot->x = x;
     robot->y = y;
     robot->direction = random_direction();
+
+    setup_path_stack(robot);
 }
 
 // this function places the robot with a specific 
