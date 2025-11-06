@@ -171,14 +171,14 @@ int is_surrounded_by_visited(Robot *robot)
 Coord adjacent_unvisited_tile(Robot *robot)
 {
     Coord n = get_coord_in_direction(robot, NORTH);
-    Coord e = get_coord_in_direction(robot, EAST);    
+    Coord e = get_coord_in_direction(robot, EAST);   
     Coord s = get_coord_in_direction(robot, SOUTH);
     Coord w = get_coord_in_direction(robot, WEST);
 
-    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight) && robot->memory[n.y][n.x] == R_VISITED) return n;
-    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight) && robot->memory[e.y][e.x] == R_VISITED) return e;
-    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight) && robot->memory[s.y][s.x] == R_VISITED) return s;
-    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight) && robot->memory[w.y][w.x] == R_VISITED) return w;
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight) && robot->memory[n.y][n.x] != R_VISITED) return n;
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight) && robot->memory[e.y][e.x] != R_VISITED) return e;
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight) && robot->memory[s.y][s.x] != R_VISITED) return s;
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight) && robot->memory[w.y][w.x] != R_VISITED) return w;
 
     fprintf(stderr, "Reached end of adjacent_unvisited_tile without finding an unvisited adjacent tile\n");
     exit(EXIT_FAILURE);

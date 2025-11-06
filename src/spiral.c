@@ -30,14 +30,16 @@ static void push_pos_to_path(Robot *robot, Stack *path)
 // this function returns the Coord at the top of the stack
 static Coord backtrack_path_tile(Stack *path)
 {
-    return pop(path);
+    pop(path);
+    return peek(path);
 }
 
 // this function gets the cardinal direction of an adjacent Coord tile; pre-requisite: tile is adjacent to robot
 static Direction direction_of_adj_tile(Robot *robot, Coord tile)
 {
-    int dx = robot->x - tile.x;
-    int dy = robot->y - tile.y;
+    int dx = tile.x - robot->x;
+    int dy = tile.y - robot->y;
+    fprintf(stderr, "dx: %d dy: %d\n", dx, dy);
     if (dx == 1) {
         return EAST;
     }
@@ -141,6 +143,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena, Stack *path)
 
     turn_right(robot);
     draw_foreground(robot, arena);
+    mark_current_tile_visited(robot);
 }
 
 // this function spirals round, using a left hand to wall technique, moving in a section as needed
@@ -151,8 +154,8 @@ static void spiral_step(Robot *robot, Arena *arena, Stack *path)
     }
     else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { 
         // ahead in bounds and tile is unknown
-        mark_current_tile_visited(robot);
         forward(robot);
+        mark_current_tile_visited(robot);
         push_pos_to_path(robot, path);
     }
     else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { 
@@ -184,6 +187,7 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena, Stack *path)
 {
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
     Direction dir = direction_of_adj_tile(robot, unvisitedTile);
+    fprintf(stderr, "direction of tile: %d\n", (int)dir);
     rotate_to_direction(robot, arena, dir);
     if (can_move_forward(robot, arena)) {
         forward(robot);
@@ -224,11 +228,4 @@ void find_markers(Robot *robot, Arena *arena)
 
 /*
 current plan: just store where has been and backtrack until reaching a position where the robot is not surrounded
-*/
-
-/* 
-big idea: store a list of the route that has been travelled - backtrack along this until adjacent to necessary tile
-when single wall: go towards nearest unvisited, backtracking the entire loop by checking if the node is in there and 
-popping off the list of nodes as far as needed until an obstacle is hit, at which Coord follow backtrack until the
-direction the program would go can be travelled to
 */
