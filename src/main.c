@@ -2,7 +2,7 @@
 
 #include "../include/arena.h"
 #include "../include/drawing.h"
-#include "../include/robot.h"
+#include "../include/spiral.h"
 #include "../include/utils.h"
 
 #include "../lib/graphics.h"

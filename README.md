@@ -23,13 +23,14 @@ COMP0002-C-Coursework/
 │   ├── main.c
 │   ├── arena.c
 │   ├── drawing.c
-│   ├── robot.c
+│   ├── spiral.c
 │   └── utils.c
 │
 ├── include/
 │   ├── arena.h
 │   ├── drawing.h
 │   ├── robot.h
+│   ├── spiral.h
 │   └── utils.h
 │
 ├── lib/
