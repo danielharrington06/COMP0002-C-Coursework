@@ -22,7 +22,21 @@ Direction random_direction();
 int random_coord(int);
 int min(int, int);
 int max(int, int);
-int check_coord_in_bounds(Coord*, int, int);
+int check_coord_in_bounds(Coord, int, int);
 double calc_squared_dist_coords(int, int, int, int);
+
+// stack
+
+typedef struct {
+    int top;
+    unsigned int capacity;
+    Coord *array;
+} Stack;
+
+Stack* create_stack(unsigned int capacity);
+void push(Stack*, Coord);
+Coord pop(Stack*);
+Coord peek(Stack*);
+void free_stack(Stack*);
 
 #endif

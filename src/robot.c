@@ -15,26 +15,24 @@
 #include <math.h>
 
 // this function returns the coord of the point that is in the direction specified (this can be adjusted to work for non forward directions by offsetting robot->direction) (which may be out of bounds); caller has responsibility to free
-Coord* get_coord_in_direction(Robot *robot, Direction direction)
+Coord get_coord_in_direction(Robot *robot, Direction direction)
 {
     // create a copy of x and y to return later 
-    Coord *coord = malloc(sizeof(coord));
-    coord->x = robot->x;
-    coord->y = robot->y;
+    Coord coord = {robot->x, robot->y};
 
     // simulate the forward movement on coord in correct direction
     switch(direction) {
         case(NORTH):
-            coord->y--;
+            coord.y--;
             break;
         case(EAST):
-            coord->x++;
+            coord.x++;
             break;
         case(SOUTH):
-            coord->y++;
+            coord.y++;
             break;
         case(WEST):
-            coord->x--;
+            coord.x--;
     }
 
     return coord;
@@ -43,14 +41,9 @@ Coord* get_coord_in_direction(Robot *robot, Direction direction)
 // this function causes the robot to move forward in current direction; pre-requisite: can_move_forward() is true
 void forward(Robot *robot) 
 {
-    Coord *coord = get_coord_in_direction(robot, robot->direction);
-    if (coord == NULL) {
-        fprintf(stderr, "Malloc failed in forward\n");
-        exit(EXIT_FAILURE);
-    }
-    robot->x = coord->x;
-    robot->y = coord->y;
-    free(coord);
+    Coord coord = get_coord_in_direction(robot, robot->direction);
+    robot->x = coord.x;
+    robot->y = coord.y;
 }
 
 // this function rotates the robot 90 degrees anticlockwise (left 90 degree turn)
@@ -74,18 +67,13 @@ int is_at_marker(Robot *robot, Arena *arena)
 // this function checks if the robot can move forward
 int can_move_forward(Robot *robot, Arena *arena) 
 {
-    Coord *coord = get_coord_in_direction(robot, robot->direction);
-    if (coord == NULL) {
-        fprintf(stderr, "Malloc failed in can_move_forward\n");
-        exit(EXIT_FAILURE);
-    }
+    Coord coord = get_coord_in_direction(robot, robot->direction);
 
     // check out of bounds
     if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
 
     // check if it hits an obstacle
-    int obstacle_ahead = arena->arenaGrid[coord->y][coord->x] == T_OBSTACLE;
-    free(coord);
+    int obstacle_ahead = arena->arenaGrid[coord.y][coord.x] == T_OBSTACLE;
 
     return !obstacle_ahead; // negate as function returns true if in bounds and not obstacle
 }
@@ -121,35 +109,23 @@ int get_marker_arena_count(Arena *arena)
 // this function checks the robot's memory to see if the tile ahead is unknown (and reachable)
 int check_forward_tile_unknown(Robot *robot)
 {
-    Coord *coord = get_coord_in_direction(robot, robot->direction);
-    if (coord == NULL) {
-        fprintf(stderr, "Malloc failed in check_forward_tile_unknown\n");
-        exit(EXIT_FAILURE);
-    }
+    Coord coord = get_coord_in_direction(robot, robot->direction);
     
     // check for out of bounds
     if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
 
-    int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
-    free(coord);
-    return is_unknown;
+    return robot->memory[coord.y][coord.x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
 }
 
 // this function checks the robot's memory to see if the tile to its left is unknown (and reachable)
 int check_left_tile_unknown(Robot *robot)
 {
-    Coord *coord = get_coord_in_direction(robot, (robot->direction - 1) % 4);
-    if (coord == NULL) {
-        fprintf(stderr, "Malloc failed in check_left_tile_unknown\n");
-        exit(EXIT_FAILURE);
-    }
+    Coord coord = get_coord_in_direction(robot, (robot->direction - 1) % 4);
     
     // check for out of bounds
     if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return 0;
 
-    int is_unknown = robot->memory[coord->y][coord->x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
-    free(coord);
-    return is_unknown;
+    return robot->memory[coord.y][coord.x] == R_UNKNOWN; // other options are visited and blocked, neither of which we want
 }
 
 // this function sets the current tile to visited in robot's memory
@@ -161,26 +137,51 @@ void mark_current_tile_visited(Robot *robot)
 // this function marks the tile in front as obstacle if not out of bounds
 void mark_ahead_tile_obstacle(Robot *robot)
 {
-    Coord *coord = get_coord_in_direction(robot, robot->direction);
-    if (coord == NULL) {
-        fprintf(stderr, "Malloc failed in mark_ahead_tile_obstacke\n");
-        exit(EXIT_FAILURE);
-    }
+    Coord coord = get_coord_in_direction(robot, robot->direction);
 
     // check out of bounds
     if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) return;
 
-    robot->memory[coord->y][coord->x] = R_BLOCKED;
-    free(coord);
+    robot->memory[coord.y][coord.x] = R_BLOCKED;
 }
 
 // this function checks if the robot is surrounded by visited tiles and is trapped in the spiral algorithm
 int is_surrounded_by_visited(Robot *robot)
 {
-    return get_coord_in_direction(robot, NORTH) && 
-    get_coord_in_direction(robot, EAST) && 
-    get_coord_in_direction(robot, SOUTH) && 
-    get_coord_in_direction(robot, WEST);
+    Coord n = get_coord_in_direction(robot, NORTH);
+    Coord e = get_coord_in_direction(robot, EAST);    
+    Coord s = get_coord_in_direction(robot, SOUTH);
+    Coord w = get_coord_in_direction(robot, WEST);
+
+    int nVisited = 1;
+    int eVisited = 1;
+    int sVisited = 1;
+    int wVisited = 1;
+
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = robot->memory[n.y][n.x] == R_VISITED;
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = robot->memory[e.y][e.x] == R_VISITED;
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = robot->memory[s.y][s.x] == R_VISITED;
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = robot->memory[w.y][w.x] == R_VISITED;
+
+    return nVisited && eVisited && sVisited && wVisited;
+
+}
+
+// this function gets an adjacent tile that is unvisited; pre-requisite: there is an adjacent unvisited tile
+Coord adjacent_unvisited_tile(Robot *robot)
+{
+    Coord n = get_coord_in_direction(robot, NORTH);
+    Coord e = get_coord_in_direction(robot, EAST);    
+    Coord s = get_coord_in_direction(robot, SOUTH);
+    Coord w = get_coord_in_direction(robot, WEST);
+
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight) && robot->memory[n.y][n.x] == R_VISITED) return n;
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight) && robot->memory[e.y][e.x] == R_VISITED) return e;
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight) && robot->memory[s.y][s.x] == R_VISITED) return s;
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight) && robot->memory[w.y][w.x] == R_VISITED) return w;
+
+    fprintf(stderr, "Reached end of adjacent_unvisited_tile without finding an unvisited adjacent tile\n");
+    exit(EXIT_FAILURE);
 }
 
 // this function counts the number of unknown tiles in the arena
@@ -332,7 +333,7 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
         Direction direction = parse_direction(argv[5]);
 
         // check out of bounds - if so, give random position and direction
-        if (!check_coord_in_bounds(&coord, robot->arenaWidth, robot->arenaHeight)) {
+        if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) {
             printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
             place_robot_random(robot, arena);
             return;

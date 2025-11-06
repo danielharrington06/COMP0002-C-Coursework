@@ -32,7 +32,7 @@ static int is_tile_in_direction_free(Arena *arena, Coord coord, Direction direct
     }
     
     // check out of bounds
-    if (!check_coord_in_bounds(&coord, arena->arenaWidth, arena->arenaHeight)) return 0;
+    if (!check_coord_in_bounds(coord, arena->arenaWidth, arena->arenaHeight)) return 0;
 
     // check if empty
     return arena->arenaGrid[coord.y][coord.x] == T_EMPTY;

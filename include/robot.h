@@ -21,7 +21,7 @@ typedef struct {
 } Robot;
 
 // functions to move the robot, sense its environemtn and deal with its memory of the arena
-Coord* get_coord_in_direction(Robot*, Direction);
+Coord get_coord_in_direction(Robot*, Direction);
 void forward(Robot*);
 void turn_left(Robot*);
 void turn_right(Robot*);
@@ -36,6 +36,7 @@ int check_left_tile_unknown(Robot*);
 void mark_current_tile_visited(Robot*);
 void mark_ahead_tile_obstacle(Robot*);
 int is_surrounded_by_visited(Robot*);
+Coord adjacent_unvisited_tile(Robot*);
 int num_unknown_tiles(Robot*);
 
 // functions dealing with robot struct
