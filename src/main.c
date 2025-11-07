@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 // start
 
-    generate_obstacles(arena, 10, O_SINGLE_WALL);
+    generate_obstacles(arena, 12, O_RANDOM);
 
     // use command line arguments to place robot correctly
     place_robot(argc, argv, robot, arena);

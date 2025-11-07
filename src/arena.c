@@ -136,10 +136,10 @@ void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation format
         case O_CLUSTERED:
             generate_obstacles_clustered(arena, numObstacles);
             break;
-        case O_SINGLE_WALL:
+        case O_WALL:
             generate_obstacles_wall(arena, numObstacles);
             break;
-        case O_CENTRAL_CAVERN:
+        case O_CAVERN:
             generate_obstacles_cavern(arena);
             break;
         default:

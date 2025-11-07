@@ -73,33 +73,6 @@ static void rotate_to_direction(Robot *robot, Arena *arena, Direction direction)
     }
 }
 
-// this function returns the coordinates of the nearest unvisited tile; pre-requisite: num unknown tiles > 0
-static Coord get_nearest_unknown_tile(Robot *robot)
-{
-    // set minDistSqr to height^2 + width^2 as this is greater than the great
-    double minDistSqr = pow(robot->arenaHeight, 2) + pow(robot->arenaWidth, 2);
-    Coord closestCoord = {-1, -1};
-
-    for (int y = 0; y < robot->arenaHeight; y++) {
-        for (int x = 0; x < robot->arenaWidth; x++) {
-            double dist = calc_squared_dist_coords(robot->x, robot->y, x, y);
-            if (dist < minDistSqr) {
-                minDistSqr = dist;
-                closestCoord.x = x;
-                closestCoord.y = y;
-            }
-        }
-    }
-
-    // return NULL for out of bounds coords (not set) - this should never occur
-    if (!check_coord_in_bounds(closestCoord, robot->arenaWidth, robot->arenaHeight)) {
-        fprintf(stderr, "get_nearest_unknown_tile found no unvisited tile\n");
-        exit(EXIT_FAILURE);
-    }
-
-    return closestCoord;
-}
-
 // this function moves the robot to its starting position to facilitate spiral algorithm
 static void reach_spiral_start(Robot *robot, Arena *arena)
 {
