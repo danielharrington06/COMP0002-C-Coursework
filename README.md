@@ -69,8 +69,8 @@ Example:
 ./robot-prog.out 10 10 3 4 east | java -jar drawapp-4.5.jar
 ```
 
-The grid width and height is automatically at least 4 even if lower values are entered.
-Their maximum value is determined based upon the values in `config.c`.
+The grid width and height is at minimum, 4, if lower values are entered.
+Their maximum value is determined based upon the values for `TILE_SIZE`, `DEFAULT_WINDOW_WIDTH` etc. `config.c`.
 They both default to 12 if no other values are given.
 
 If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.
