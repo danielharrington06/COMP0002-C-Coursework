@@ -5,6 +5,8 @@
 #include "../include/spiral.h"
 #include "../include/utils.h"
 
+#include "../lib/graphics.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -67,7 +69,7 @@ static void rotate_to_direction(Robot *robot, Arena *arena, Direction direction)
             draw_foreground(robot, arena);
             break;
         default:
-            fprintf(stderr, "offset not 0 to 3 in rotate_to_direction\n");
+            fprintf(stderr, "offset is not 0 to 3 in rotate_to_direction\n");
             exit(EXIT_FAILURE);
             break;
     }
@@ -78,6 +80,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena)
 {
     // draw starting position
     draw_foreground(robot, arena);
+    sleep(500);
 
     // move forward until an obstacle or arena wall is faced
     while (can_move_forward(robot, arena) && get_marker_arena_count(arena) > 0) 
@@ -158,7 +161,6 @@ void find_markers(Robot *robot, Arena *arena)
     setup_path_stack(robot);
 
     reach_spiral_start(robot, arena);
-    fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
 
     // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
     while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
@@ -176,12 +178,9 @@ void find_markers(Robot *robot, Arena *arena)
                 backtrack_step(robot, arena);
             }
 
-            on_unknown_tile = move_onto_unknown_tile(robot, arena); // problem is here
-            fprintf(stderr, "%d %d\n", is_surrounded_by_known(robot), on_unknown_tile);
-            fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
+            on_unknown_tile = move_onto_unknown_tile(robot, arena);
         }
     }
-    fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
 }
 
 /*

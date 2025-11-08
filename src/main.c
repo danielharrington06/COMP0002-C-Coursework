@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
 {
 // setup
     unsigned int seed = time(NULL);
-    fprintf(stderr, "%d\n", seed);
-    srand(1762602886); // seed random with time
+    fprintf(stderr, "%d\n", seed); // used for testing so a configuraiton that gives a bug can be replayed
+    srand(seed); // seed random with time
 
     // determine arena dimensions
     // determine arena width and height from the min of assigned size and max possible size
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     
     // render background
     draw_background(arena);
-    sleep(1000);
+    sleep(500);
 
 // loop
     foreground();
