@@ -80,7 +80,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena)
     draw_foreground(robot, arena);
 
     // move forward until an obstacle or arena wall is faced
-    while (can_move_forward(robot, arena) && get_marker_arena_count(arena)) 
+    while (can_move_forward(robot, arena) && get_marker_arena_count(arena) > 0) 
     {
         forward(robot);
         push_pos_to_path(robot);
@@ -89,6 +89,7 @@ static void reach_spiral_start(Robot *robot, Arena *arena)
         check_for_and_pickup_marker(robot, arena);
     }
 
+    mark_ahead_tile_obstacle(robot); // so if the tile is ostacle, it doesnt keep trying to get onto it
     turn_right(robot);
     draw_foreground(robot, arena);
     mark_current_tile_visited(robot);
@@ -103,8 +104,8 @@ static void spiral_step(Robot *robot, Arena *arena)
     else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { 
         // ahead in bounds and tile is unknown
         forward(robot);
-        mark_current_tile_visited(robot);
         push_pos_to_path(robot);
+        mark_current_tile_visited(robot);
     }
     else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { 
         // ahead in bounds but already visited
@@ -143,9 +144,11 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena)
         mark_current_tile_visited(robot);
         push_pos_to_path(robot);
         draw_foreground(robot, arena);
-        fprintf(stderr, "Backtrack succesful\n"); // !! remove later
+
+        check_for_and_pickup_marker(robot, arena);
         return 1;
     }
+    mark_ahead_tile_obstacle(robot);
     return 0;
 }
 
@@ -155,6 +158,7 @@ void find_markers(Robot *robot, Arena *arena)
     setup_path_stack(robot);
 
     reach_spiral_start(robot, arena);
+    fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
 
     // then spiral clockwise (by keeping already visited tiles or unvisitable tiles to the left)
     while (get_marker_arena_count(arena) > 0) // !! change this to count num unvisited tiles
@@ -172,9 +176,12 @@ void find_markers(Robot *robot, Arena *arena)
                 backtrack_step(robot, arena);
             }
 
-            on_unknown_tile = move_onto_unknown_tile(robot, arena);
+            on_unknown_tile = move_onto_unknown_tile(robot, arena); // problem is here
+            fprintf(stderr, "%d %d\n", is_surrounded_by_known(robot), on_unknown_tile);
+            fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
         }
     }
+    fprintf(stderr, "%d %d\n", get_marker_arena_count(arena), get_marker_carry_count(robot));
 }
 
 /*

@@ -145,6 +145,12 @@ void mark_ahead_tile_obstacle(Robot *robot)
     robot->memory[coord.y][coord.x] = R_BLOCKED;
 }
 
+// this function returns true if the given coord is a known tile (visited or a known obstacle)
+int is_tile_known(Robot *robot, Coord tile) 
+{
+    return robot->memory[tile.y][tile.x] == R_VISITED || robot->memory[tile.y][tile.x] == R_BLOCKED;
+}
+
 // this function checks if the robot is surrounded by visited tiles and is trapped in the spiral algorithm
 int is_surrounded_by_known(Robot *robot)
 {
@@ -158,11 +164,13 @@ int is_surrounded_by_known(Robot *robot)
     int sVisited = 1;
     int wVisited = 1;
 
-    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = (robot->memory[n.y][n.x] == R_VISITED || robot->memory[n.y][n.x] == R_BLOCKED);
-    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = (robot->memory[e.y][e.x] == R_VISITED || robot->memory[e.y][e.x] == R_BLOCKED);
-    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = (robot->memory[s.y][s.x] == R_VISITED || robot->memory[s.y][s.x] == R_BLOCKED);
-    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = (robot->memory[w.y][w.x] == R_VISITED || robot->memory[w.y][w.x] == R_BLOCKED);
-
+    // set Visited to true if known (either visited or blocked)
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = is_tile_known(robot, n);
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = is_tile_known(robot, e);
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = is_tile_known(robot, s);
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = is_tile_known(robot, w);
+    
+    // if any are unknown, false is returned
     return nVisited && eVisited && sVisited && wVisited;
 
 }
@@ -175,10 +183,11 @@ Coord adjacent_unvisited_tile(Robot *robot)
     Coord s = get_coord_in_direction(robot, SOUTH);
     Coord w = get_coord_in_direction(robot, WEST);
 
-    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight) && robot->memory[n.y][n.x] != R_VISITED) return n;
-    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight) && robot->memory[e.y][e.x] != R_VISITED) return e;
-    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight) && robot->memory[s.y][s.x] != R_VISITED) return s;
-    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight) && robot->memory[w.y][w.x] != R_VISITED) return w;
+    // return the node if the coordinate is in bounds and unknown
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight) && !is_tile_known(robot, n)) return n;
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight) && !is_tile_known(robot, e)) return e;
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight) && !is_tile_known(robot, s)) return s;
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight) && !is_tile_known(robot, w)) return w;
 
     fprintf(stderr, "Reached end of adjacent_unvisited_tile without finding an unvisited adjacent tile\n");
     exit(EXIT_FAILURE);

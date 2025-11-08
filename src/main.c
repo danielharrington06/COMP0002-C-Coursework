@@ -14,7 +14,9 @@
 int main(int argc, char *argv[])
 {
 // setup
-    srand(time(NULL)); // seed random with time
+    unsigned int seed = time(NULL);
+    fprintf(stderr, "%d\n", seed);
+    srand(1762602886); // seed random with time
 
     // determine arena dimensions
     // determine arena width and height from the min of assigned size and max possible size
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
     // use command line arguments to place robot correctly
     place_robot(argc, argv, robot, arena);
 
-    generate_markers(arena, 3, M_RANDOM);
+    generate_markers(arena, 20, M_RANDOM);
     
     // render background
     draw_background(arena);
