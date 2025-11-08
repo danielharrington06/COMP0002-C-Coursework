@@ -7,6 +7,9 @@
 extern const int DEFAULT_ARENA_WIDTH;
 extern const int DEFAULT_ARENA_HEIGHT;
 
+extern const int MIN_ARENA_WIDTH;
+extern const int MIN_ARENA_HEIGHT;
+
 // Drawing constants
 extern const int TILE_SIZE;
 extern const int GRIDLINE_WIDTH;

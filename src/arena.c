@@ -233,7 +233,11 @@ int determine_arena_width(int argc, char *argv[])
     int width;
     if (argc == 3 || argc == 6) { // dimensions have been specified correctly
         width = atoi(argv[1]);
-        return max(4, min(width, calculate_max_arena_width()));
+        if (width < MIN_ARENA_WIDTH) {
+            fprintf(stderr, "Arena width set to %d as given value %d was too small\n", MIN_ARENA_WIDTH, width);
+            return MIN_ARENA_WIDTH;
+        }
+        return min(width, calculate_max_arena_width());
     }
 
     return DEFAULT_ARENA_WIDTH;
@@ -245,7 +249,11 @@ int determine_arena_height(int argc, char *argv[])
     int height;
     if (argc == 3 || argc == 6) { // dimensions have been specified correctly
         height = atoi(argv[2]);
-        return max(4, min(height, calculate_max_arena_height()));
+        if (height < MIN_ARENA_HEIGHT) {
+            fprintf(stderr, "Arena height set to %d as given value %d was too small\n", MIN_ARENA_HEIGHT, height);
+            return MIN_ARENA_HEIGHT;
+        }
+        return min(height, calculate_max_arena_height());
     }
 
     return DEFAULT_ARENA_HEIGHT;

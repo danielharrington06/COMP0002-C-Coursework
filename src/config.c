@@ -1,8 +1,11 @@
 #include "../include/config.h"
 #include "../include/arena.h"
 
-const int DEFAULT_ARENA_WIDTH = 12;
-const int DEFAULT_ARENA_HEIGHT = 12;
+const int DEFAULT_ARENA_WIDTH = 16;
+const int DEFAULT_ARENA_HEIGHT = 16;
+
+const int MIN_ARENA_WIDTH = 4;
+const int MIN_ARENA_HEIGHT = 4;
 
 const int TILE_SIZE = 40;
 const int GRIDLINE_WIDTH = 2;
