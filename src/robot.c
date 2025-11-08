@@ -17,11 +17,8 @@
 // this function returns the coord of the point that is in the direction specified (this can be adjusted to work for non forward directions by offsetting robot->direction) (which may be out of bounds); caller has responsibility to free
 Coord get_coord_in_direction(Robot *robot, Direction direction)
 {
-    // create a copy of x and y to return later 
-    Coord coord = {robot->x, robot->y};
-
-    // simulate the forward movement on coord in correct direction
-    switch(direction) {
+    Coord coord = {robot->x, robot->y}; // create a copy of x and y to return later 
+    switch(direction) { // simulate the forward movement on coord in correct direction
         case(NORTH):
             coord.y--;
             break;
@@ -34,7 +31,6 @@ Coord get_coord_in_direction(Robot *robot, Direction direction)
         case(WEST):
             coord.x--;
     }
-
     return coord;
 }
 
@@ -159,19 +155,19 @@ int is_surrounded_by_known(Robot *robot)
     Coord s = get_coord_in_direction(robot, SOUTH);
     Coord w = get_coord_in_direction(robot, WEST);
 
-    int nVisited = 1;
-    int eVisited = 1;
-    int sVisited = 1;
-    int wVisited = 1;
+    // default to true as if out of bounds the tile is known
+    int nKnown = 1;
+    int eKnown = 1;
+    int sKnown = 1;
+    int wKnown = 1;
 
-    // set Visited to true if known (either visited or blocked)
-    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nVisited = is_tile_known(robot, n);
-    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eVisited = is_tile_known(robot, e);
-    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sVisited = is_tile_known(robot, s);
-    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wVisited = is_tile_known(robot, w);
+    // for each corodinate set Visited to true if known (either visited or blocked)
+    if (check_coord_in_bounds(n, robot->arenaWidth, robot->arenaHeight)) nKnown = is_tile_known(robot, n);
+    if (check_coord_in_bounds(e, robot->arenaWidth, robot->arenaHeight)) eKnown = is_tile_known(robot, e);
+    if (check_coord_in_bounds(s, robot->arenaWidth, robot->arenaHeight)) sKnown = is_tile_known(robot, s);
+    if (check_coord_in_bounds(w, robot->arenaWidth, robot->arenaHeight)) wKnown = is_tile_known(robot, w);
     
-    // if any are unknown, false is returned
-    return nVisited && eVisited && sVisited && wVisited;
+    return nKnown && eKnown && sKnown && wKnown; // if any are unknown, false is returned
 
 }
 
@@ -217,7 +213,7 @@ static void allocate_robots_memory(Robot *robot)
     // allocate memory for row pointers
     robot->memory = calloc(height, sizeof(RobotTile *));
     if (robot->memory == NULL) {
-        fprintf(stderr, "Failed to allocate memory for robot memory row pointers\n");
+        fprintf(stderr, "Calloc returned null for row pointers in allocate_robots_memory\n");
         exit(EXIT_FAILURE);
     }
 
@@ -225,7 +221,7 @@ static void allocate_robots_memory(Robot *robot)
     for (int i = 0; i < height; i++) {
         robot->memory[i] = calloc(width, sizeof(RobotTile));
         if (robot->memory[i] == NULL) {
-            fprintf(stderr, "Failed to allocate memory for a row in robot memory\n");
+            fprintf(stderr, "Calloc returned null for a row of robots memory in allocate_robots_memory\n");
             // free already allocated memory
             for (int j = 0; j < i; j++) {
                 free(robot->memory[j]);
@@ -241,18 +237,17 @@ Robot* create_robot(Arena *arena)
 {
     // allocate memory
     Robot* robot = malloc(sizeof(Robot));
-    if (robot == NULL) return NULL;
+    if (robot == NULL) {
+        fprintf(stderr, "Malloc returned null in create_robot\n");
+        exit(EXIT_FAILURE);
+    }
 
-    // these will be changed
-    robot->x = 0;
-    robot->y = 0;
-    robot->direction = NORTH;
-
-    // this is correct starting value
+    robot->x = 0; // will be changed
+    robot->y = 0; // will be changed
+    robot->direction = NORTH; // will be changed
     robot->markerCount = 0;
     robot->arenaWidth = arena->arenaWidth;
     robot->arenaHeight = arena->arenaHeight;
-
     allocate_robots_memory(robot);
 
     return robot;
@@ -364,18 +359,18 @@ void place_robot(int argc, char *argv[], Robot *robot, Arena *arena)
         Coord coord;
         coord.x = atoi(argv[3]);
         coord.y = atoi(argv[4]);
-        Direction direction = parse_direction(argv[5]);
+        Direction direction = parse_direction(argv[5]); // returns -1 if invalid input, dealt with below
 
         // check out of bounds - if so, give random position and direction
         if (!check_coord_in_bounds(coord, robot->arenaWidth, robot->arenaHeight)) {
-            printf("Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
+            fprintf(stderr, "Error: x and y must be between 0 and %d / %d. Random position and direction generated.\n", robot->arenaWidth - 1, robot->arenaHeight - 1);
             place_robot_random(robot, arena);
             return;
         }
 
         // check invalid direction - if so, give random direction, but we know x, y is in range
         if (direction == -1) {
-            printf("Error: direction must be north, east, south, west. Random direction generated.\n");
+            fprintf(stderr, "Error: direction must be north, east, south, west. Random direction generated.\n");
             place_robot_specific(robot, arena, coord, random_direction());
             return;
         }

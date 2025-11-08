@@ -21,16 +21,16 @@ typedef struct {
 typedef enum {
     O_NONE = 0,
     O_RANDOM = 1,
-    O_CLUSTERED = 2,
-    O_WALL = 3,
-    O_CAVERN = 4
+    O_WALL = 2,
+    O_CAVERN = 3
 } ObstacleFormation;
 
 typedef enum {
     M_EDGE = 0,
-    M_ANYWHERE = 1,
-    M_RANDOM = 2
+    M_RANDOM = 1
 } MarkerFormation;
+
+void check_obstacle_marker_values(Arena*, ObstacleFormation, int, MarkerFormation, int);
 
 // functions to generate obstacles and markers
 void generate_obstacles(Arena*, int, ObstacleFormation);

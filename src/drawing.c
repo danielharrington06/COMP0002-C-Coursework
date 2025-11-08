@@ -95,7 +95,7 @@ static Point* equ_triangle_coords(double triangle_circumrad)
     }
 
     vertices[0].x = triangle_circumrad*cos(PI/2);
-    vertices[0].y = triangle_circumrad*sin(PI/2) - OBJECT_PADDING/2;
+    vertices[0].y = triangle_circumrad*sin(PI/2) - OBJECT_PADDING/2; // - OBJECT_PADDING/2 just to visually center it a bit better
     vertices[1].x = triangle_circumrad*cos(-PI/6);
     vertices[1].y = triangle_circumrad*sin(-PI/6) - OBJECT_PADDING/2;
     vertices[2].x = triangle_circumrad*cos(7*PI/6);
@@ -154,7 +154,7 @@ static void draw_triangle(Point* vertices, int x, int y)
 static void draw_robot(Robot *robot) 
 {
     /* 
-    general idea here is to define the coordinates needed if the robot 
+    general idea here is to first define the coordinates needed if the robot 
     was drawn on mathetmatical coordinate axes with its center at (0, 0)
      
     this can then be flipped vertically and translated to the correct position
@@ -163,18 +163,15 @@ static void draw_robot(Robot *robot)
     // triangle radius is the distance from center to vertice
     double triangle_circumrad = TILE_SIZE/2 - OBJECT_PADDING;
 
-    // generate vertices
+    // generate cartesian vertices
     Point* vertices = equ_triangle_coords(triangle_circumrad);
     if (vertices == NULL) {
         fprintf(stderr, "Malloc returned null in equ_triangle_coords\n");
         exit(EXIT_FAILURE);
     }
 
-    // rotate to match robot's direction
-    rotate_points(vertices, 3, robot->direction*90);
-
-    // take into account offset necessary and draw the triangle
-    draw_triangle(vertices, robot->x, robot->y);
+    rotate_points(vertices, 3, robot->direction*90); // rotate cartesian coords to match robots direction
+    draw_triangle(vertices, robot->x, robot->y); // now translate onto drawapp grid
 
     free(vertices);
 }
@@ -223,6 +220,6 @@ void draw_foreground(Robot *robot, Arena *arena)
 {
     clear();
     draw_markers(arena);
-    draw_robot(robot);
+    draw_robot(robot); // draw robot second so that its on top of marker
     sleep(TIME_INTERVAL);
 }

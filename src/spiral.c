@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <malloc.h>
 
 // this function gets the cardinal direction of an adjacent Coord tile; pre-requisite: tile is adjacent to robot
 static Direction direction_of_adj_tile(Robot *robot, Coord tile)
@@ -53,7 +52,6 @@ static void rotate_to_direction(Robot *robot, Arena *arena, Direction direction)
             // already in correct direction
             break;
         case(1):
-            // turn once right
             turn_right(robot);
             draw_foreground(robot, arena);
             break;
@@ -104,18 +102,15 @@ static void spiral_step(Robot *robot, Arena *arena)
     if (check_left_tile_unknown(robot)) {
         turn_left(robot);
     }
-    else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { 
-        // ahead in bounds and tile is unknown
+    else if (can_move_forward(robot, arena) && check_forward_tile_unknown(robot)) { // ahead in bounds and tile is unknown
         forward(robot);
         push_pos_to_path(robot);
         mark_current_tile_visited(robot);
     }
-    else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { 
-        // ahead in bounds but already visited
+    else if (can_move_forward(robot, arena) && !check_forward_tile_unknown(robot)) { // ahead in bounds but already visited
         turn_right(robot);
     }
-    else { 
-        // out of bounds or an obstacle
+    else { // out of bounds or an obstacle
         mark_ahead_tile_obstacle(robot);
         turn_right(robot);
     }
@@ -139,7 +134,7 @@ static void backtrack_step(Robot *robot, Arena *arena)
 static int move_onto_unknown_tile(Robot *robot, Arena *arena)
 {
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
-    Direction dir = direction_of_adj_tile(robot, unvisitedTile);
+    Direction dir = direction_of_adj_tile(robot, unvisitedTile); // finds the tile to try to move onto
     rotate_to_direction(robot, arena, dir);
     draw_foreground(robot, arena);
     if (can_move_forward(robot, arena)) {
@@ -148,10 +143,10 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena)
         push_pos_to_path(robot);
         draw_foreground(robot, arena);
 
-        check_for_and_pickup_marker(robot, arena);
+        check_for_and_pickup_marker(robot, arena); // make sure not to forget to pick it up
         return 1;
     }
-    mark_ahead_tile_obstacle(robot);
+    mark_ahead_tile_obstacle(robot); // if cannot move onto it, must be an obstacle
     return 0;
 }
 
@@ -170,7 +165,7 @@ void find_markers(Robot *robot, Arena *arena)
             spiral_step(robot, arena);
         }
 
-        int on_unknown_tile = 0;
+        int on_unknown_tile = 0; // keep track of if getting onto the unknown tile was succesful
         while (!on_unknown_tile && get_marker_arena_count(arena) > 0)
         {
             while (is_surrounded_by_known(robot) && get_marker_arena_count(arena) > 0)

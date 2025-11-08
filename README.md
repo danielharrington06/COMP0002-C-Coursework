@@ -20,14 +20,17 @@ The folder should be arranged as follows **before compiling**:
 COMP0002-C-Coursework/
 │
 ├── src/
-│   ├── main.c
 │   ├── arena.c
+│   ├── config.c
 │   ├── drawing.c
+│   ├── main.c
+│   ├── robot.c
 │   ├── spiral.c
 │   └── utils.c
 │
 ├── include/
 │   ├── arena.h
+│   ├── config.h
 │   ├── drawing.h
 │   ├── robot.h
 │   ├── spiral.h
@@ -66,25 +69,18 @@ Example:
 ./robot-prog.out 10 10 3 4 east | java -jar drawapp-4.5.jar
 ```
 
+The grid width and height is automatically at least 4 even if lower values are entered.
+Their maximum value is determined based upon the values in `config.c`.
+They both default to 12 if no other values are given.
+
 If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.
 
-If the directino is invalid, a random direction will be chosen, but the position kept.
+If the direction is invalid, a random direction will be chosen, but the position kept.
 
 ## 📁 Program Structure Overview
 
 !! include explanation of what is in each `.c` file
 
-## 🗺️ Map Coordinate System Explanation
+talk about `arenaGrid[y][x]`
 
-The program uses a **zero-indexed coordinate system** for both the arena and the robot’s internal map.
-- The top-left corner of the arena is at `(0, 0)`
-- The bottom-right corner is at `(arenaWidth - 1, arenaHeight - 1)`
-- The x-coordinate increases from left to right
-- The y-coordinate increases from top to bottom
-
-Each tile in the arena grid is uniquely identified by its `(x, y)` coordinates within these bounds.
-
-Example:
-- For an arena of size 10 × 8:
-- Top-left tile → `(0, 0)`
-- Bottom-right tile → `(9, 7)`
+like the drawapp, the coordinate system has its origin in the top left corner and the x-axis extends to the right, and the y-axis extends downwards
