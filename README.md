@@ -77,12 +77,13 @@ Example:
 ./robot-prog.out 10 10 4 4 east | java -jar drawapp-4.5.jar
 ```
 
-The grid width and height is at minimum, 4, if lower values are entered.
-Their maximum value is determined based upon the values for `TILE_SIZE`, `DEFAULT_WINDOW_WIDTH` etc. in `config.c`.
+The grid width and height must be at least 4 and if a lower value is entered, the width/height is forced to be 4.
 
-If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.
+Their maximum values are determined based upon the values for `TILE_SIZE`, `DEFAULT_WINDOW_WIDTH` etc. in `config.c` by the functions `calculate_max_arena_width` and calculate_max_arena_height` in `drawing.c`.
 
-If the direction is invalid, a random direction will be chosen, but the position kept.
+If the specified position is taken up by an obstacle or is out of bounds, a random position and direction is generated.
+
+If the direction is invalid, a random direction is chosen, but the position kept.
 
 ## Program Structure Overview
 
@@ -91,3 +92,9 @@ If the direction is invalid, a random direction will be chosen, but the position
 talk about `arenaGrid[y][x]`
 
 like the drawapp, the coordinate system has its origin in the top left corner and the x-axis extends to the right, and the y-axis extends downwards
+
+explain about stderr for testing and malloc failures
+
+explain how to test and try different things in the code 
+
+explain limtis on number of obstacles and markers
