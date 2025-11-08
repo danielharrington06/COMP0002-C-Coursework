@@ -20,11 +20,11 @@ void check_obstacle_marker_values(Arena *arena, ObstacleFormation of, int numObs
         exit(EXIT_FAILURE);
     }
     if (numObstacles > (arena->arenaWidth * arena->arenaHeight)/3) {
-        fprintf(stderr, "Number of obstacles %d exceeds 1/3 number of tiles %d\n", numObstacles, (arena->arenaWidth * arena->arenaHeight)/3);
+        fprintf(stderr, "Number of obstacles: %d exceeds 1/3 number of tiles: %d\n", numObstacles, (arena->arenaWidth * arena->arenaHeight)/3);
         exit(EXIT_FAILURE);
     }
     if (numMarkers > (2*arena->arenaWidth * arena->arenaHeight)/3) {
-        fprintf(stderr, "Number of markers %d exceeds 2/3 number of tiles %d\n", numMarkers, (2 * arena->arenaWidth * arena->arenaHeight)/3);
+        fprintf(stderr, "Number of markers: %d exceeds 2/3 number of tiles: %d\n", numMarkers, (2 * arena->arenaWidth * arena->arenaHeight)/3);
         exit(EXIT_FAILURE);
     }
 }
@@ -68,15 +68,16 @@ static void generate_obstacles_wall(Arena* arena, int numObstacles)
 // this function creates a cavern by finding a central arenaGrid coordinate and determines whether each coordinate is within a set radius; pre-requisite: arenaGrid is completely empty
 static void generate_obstacles_cavern(Arena *arena)
 {
-    // define radius and centre of the cavern
-    int radius = min(arena->arenaWidth, arena->arenaHeight)/2 - 1;
-    int centreX = (arena->arenaWidth-1)/2;
-    int centreY = (arena->arenaHeight-1)/2;
+    double radius = min(arena->arenaWidth, arena->arenaHeight) / 2.0 - 1;
+    double centreX = arena->arenaWidth / 2.0;
+    double centreY = arena->arenaHeight / 2.0;
 
-    for (int x = 0; x < arena->arenaWidth; x++) {
-        for (int y = 0; y < arena->arenaHeight; y++) {
-            int distToCentre = pow(centreX-x, 2) + pow(centreY-y, 2);
-            if (distToCentre >= radius) {
+    for (int y = 0; y < arena->arenaHeight; y++) {
+        for (int x = 0; x < arena->arenaWidth; x++) {
+            // offset x and y by +0.5 to measure from cell center - necessary or it doesnt work
+            double sqrDistToCentre = calc_squared_dist_coords(centreX, centreY, x + 0.5, y + 0.5);
+
+            if (sqrDistToCentre >= radius * radius) {
                 arena->arenaGrid[y][x] = T_OBSTACLE;
             }
         }

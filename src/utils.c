@@ -43,7 +43,7 @@ int check_coord_in_bounds(Coord coord, int width, int height)
 }
 
 // this function calculates the squared distance between two coordinates
-double calc_squared_dist_coords(int x1, int y1, int x2, int y2)
+double calc_squared_dist_coords(double x1, double y1, double x2, double y2)
 {
     return pow(x1 - x2, 2) + pow(y1 - y2, 2);
 }

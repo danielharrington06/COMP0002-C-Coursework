@@ -10,6 +10,7 @@ A robot, represented by a triangle, moves around the arena following a control a
 - Move forward, rotate left/right, and detect walls or obstacles
 - Detect and pick up markers
 - Drop markers at specific locations (e.g. a corner)
+- Remember where it has been and mark locations as visited and blocked (by an obstacle).
 
 The arena and obstacles are drawn on the background layer once, while the robot is animated on the foreground layer, giving the effect of movement without redrawing the background.
 
@@ -70,7 +71,7 @@ Example:
 ```
 
 The grid width and height is at minimum, 4, if lower values are entered.
-Their maximum value is determined based upon the values for `TILE_SIZE`, `DEFAULT_WINDOW_WIDTH` etc. `config.c`.
+Their maximum value is determined based upon the values for `TILE_SIZE`, `DEFAULT_WINDOW_WIDTH` etc. in `config.c`.
 They both default to 12 if no other values are given.
 
 If the specified position is taken up by an obstacle or is out of bounds, a random position will be generated.

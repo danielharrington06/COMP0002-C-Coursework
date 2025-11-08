@@ -23,7 +23,7 @@ int random_coord(int);
 int min(int, int);
 int max(int, int);
 int check_coord_in_bounds(Coord, int, int);
-double calc_squared_dist_coords(int, int, int, int);
+double calc_squared_dist_coords(double, double, double, double);
 
 // stack
 

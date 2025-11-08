@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 // setup
     // seed random with time
     unsigned int seed = time(NULL);
-    //fprintf(stderr, "%d\n", seed); // used for testing so a configuration that gives a bug can be replayed
+    fprintf(stderr, "%d\n", seed); // used for testing so a configuration that gives a bug can be replayed
     srand(seed); // seed random with time otherwise arena is the same every time
 
     const int ARENA_WIDTH = determine_arena_width(argc, argv); 

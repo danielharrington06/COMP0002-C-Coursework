@@ -104,6 +104,29 @@ static Point* equ_triangle_coords(double triangle_circumrad)
     return vertices;
 }
 
+// this function returns a pointer to an array of Points representing the vertices of the rectangle with its base at the bottom
+static Point* rect_coords(double triangle_circumrad)
+{
+    // a triangle's circumradius is the distance from the center to any vertex
+    // not a feature of the rectangle, but used for scaling
+    Point *vertices = malloc(4 * sizeof(Point));
+    if (vertices == NULL) {
+        fprintf(stderr, "Malloc returned null in equ_triangle_coords\n");
+        exit(EXIT_FAILURE);
+    }
+
+    vertices[0].x = -triangle_circumrad;
+    vertices[0].y = triangle_circumrad*sin(-PI/6) - OBJECT_PADDING/2; // bottom of triangle
+    vertices[1].x = triangle_circumrad;
+    vertices[1].y = triangle_circumrad*sin(7*PI/6) - OBJECT_PADDING/2; // bottom of triangle
+    vertices[2].x = triangle_circumrad;
+    vertices[2].y = triangle_circumrad*sin(-PI/6) - OBJECT_PADDING/2 - triangle_circumrad*0.3;
+    vertices[3].x = -triangle_circumrad;
+    vertices[3].y = triangle_circumrad*sin(7*PI/6) - OBJECT_PADDING/2 - triangle_circumrad*0.3;
+
+    return vertices;
+}
+
 // this function rotates a single point around the origin
 static void rotate_point(Point *point, double degrees) 
 {
@@ -150,6 +173,27 @@ static void draw_triangle(Point* vertices, int x, int y)
     fillPolygon(numVertices, xCoords, yCoords);
 }
 
+// this function draws a rectangle on a specific arenaGrid tile at the base of the robot
+static void draw_rectangle(Point* vertices, int x, int y)
+{
+    setColour(red);
+    int numVertices = 4;
+
+    // convert from arenaGrid x,y to coordinate x, y
+    int offsetX = BORDER_THICKNESS + x*TILE_SIZE + 0.5*TILE_SIZE;
+    int offsetY = BORDER_THICKNESS + y*TILE_SIZE + 0.5*TILE_SIZE;
+
+    int xCoords[4];
+    int yCoords[4];
+
+    // iterate over xCoords then yCoords to offset them to the right position
+    // - vertices[i] needed to get it to render correctly (conversion from cartesian to drawapp coords)
+    for (int i = 0; i < numVertices; i++) xCoords[i] = round(-vertices[i].x + offsetX);
+    for (int i = 0; i < numVertices; i++) yCoords[i] = round(-vertices[i].y + offsetY);
+
+    fillPolygon(numVertices, xCoords, yCoords);
+}
+
 // this function draws the robot at its current arenaGrid position and direction
 static void draw_robot(Robot *robot) 
 {
@@ -164,16 +208,25 @@ static void draw_robot(Robot *robot)
     double triangle_circumrad = TILE_SIZE/2 - OBJECT_PADDING;
 
     // generate cartesian vertices
-    Point* vertices = equ_triangle_coords(triangle_circumrad);
-    if (vertices == NULL) {
-        fprintf(stderr, "Malloc returned null in equ_triangle_coords\n");
+    Point* triVertices = equ_triangle_coords(triangle_circumrad);
+    if (triVertices == NULL) {
+        fprintf(stderr, "Malloc returned null for triangle vertices in equ_triangle_coords\n");
+        exit(EXIT_FAILURE);
+    }
+    Point* rectVertices  = rect_coords(triangle_circumrad);
+    if (rectVertices == NULL) {
+        fprintf(stderr, "Malloc returned null for rectangle vertices in equ_triangle_coords\n");
         exit(EXIT_FAILURE);
     }
 
-    rotate_points(vertices, 3, robot->direction*90); // rotate cartesian coords to match robots direction
-    draw_triangle(vertices, robot->x, robot->y); // now translate onto drawapp grid
+    rotate_points(triVertices, 3, robot->direction*90); // rotate cartesian coords of triangle to match robots direction
+    draw_triangle(triVertices, robot->x, robot->y); // now translate onto drawapp grid
 
-    free(vertices);
+    rotate_points(rectVertices, 4, robot->direction*90);
+    draw_rectangle(rectVertices, robot->x, robot->y);
+
+    free(triVertices);
+    free(rectVertices);
 }
 
 // this function draws a single marker at arena position (x, y)
