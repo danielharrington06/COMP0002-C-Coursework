@@ -124,8 +124,10 @@ static void backtrack_step(Robot *robot, Arena *arena)
 {
     Coord prevTile = backtrack_path_tile(robot);
     Direction dirOfPrevTile = direction_of_adj_tile(robot, prevTile);
-    rotate_to_direction(robot, arena, dirOfPrevTile);
-    draw_foreground(robot, arena);
+    if (dirOfPrevTile != robot->direction) { 
+        rotate_to_direction(robot, arena, dirOfPrevTile);
+        draw_foreground(robot, arena); // no need to redraw foreground if same direction as this slows drawapp
+    }
     forward(robot); // should not push position to path as currently at that position
     draw_foreground(robot, arena);
 }
@@ -135,8 +137,10 @@ static int move_onto_unknown_tile(Robot *robot, Arena *arena)
 {
     Coord unvisitedTile = adjacent_unvisited_tile(robot);
     Direction dir = direction_of_adj_tile(robot, unvisitedTile); // finds the tile to try to move onto
-    rotate_to_direction(robot, arena, dir);
-    draw_foreground(robot, arena);
+    if (dir != robot->direction) {
+        rotate_to_direction(robot, arena, dir);
+        draw_foreground(robot, arena);
+    }
     if (can_move_forward(robot, arena)) {
         forward(robot);
         mark_current_tile_visited(robot);
