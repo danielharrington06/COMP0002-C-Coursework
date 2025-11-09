@@ -4,7 +4,7 @@
 
 This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h` and `drawapp-4.5.jar`).
 
-The program displays a tile-based arena with markers and obstacles placed at random positions. Unless otherwise specified, the arena's width and height are both 16 tiles.
+The program displays a tile-based arena with markers and obstacles placed at random positions. Unless otherwise specified, the arena's width and height are both `16` tiles.
 
 A robot, represented by a triangle, moves around the arena following a **spiral algorithm** of my own design.
 
