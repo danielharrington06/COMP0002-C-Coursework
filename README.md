@@ -1,8 +1,10 @@
 # COMP0002 C Coursework
 
+It is recommended that this `.md` file is viewed in *Preview* mode rather than viewing the source code. Please read the this file in its entirety before looking at my program.
+
 ## Description
 
-This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h` and `drawapp-4.5.jar`).
+This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h` and `drawapp-4.5.jar`). 
 
 The program displays a tile-based arena with markers and obstacles placed at random positions. Unless otherwise specified, the arena's width and height are both `16` tiles.
 
@@ -59,7 +61,7 @@ To run the program with the drawing application:
 ```bash
 ./robot-prog.out | java -jar drawapp-4.5.jar
 ```
-This will randomise the robot's position and direction in an arena of default size 16x16.
+This will randomise the robot's position and direction in an arena of default size `16`x`16`.
 
 ### Command Line Arguments
 
@@ -169,3 +171,8 @@ Like the drawapp, the arena's origin is in the top left corner, the x-axis exten
 Where an error occurs, whether it can be resolved or not, I have used `fprintf` to `stderr` so that the message is displayed in the command line while drawapp runs. Where the error stops the program from running, I then had the program call `exit(EXIT_FAILURE)`.
 
 The code enforces limits on the number of obstacles and markers that can be placed. The number of obstacles must be less than `1/3` of the number of tiles (to reduce the chance that obstacles block a marker from being reached) and the number of markers must be less than `2/3` of the number of tiles (so markers can always be placed). In reality, it is best to keep below these thresholds otherwise markers may get blocked from being reached by the robot.
+
+## Disclaimers
+- I did **not** use generative AI to produce any source code used for this coursework
+- The spiral algorithm is an algorithm I thought up completely of my own design, **without** the use of AI nor other internet sources
+- I did use Copilot and ChatGPT to understand and improve my understanding of how pointers and structs work before we had covered them in lectures
