@@ -6,7 +6,7 @@ This program implements a robot simulation and drawing system using C and the pr
 
 The program displays a tile-based arena with markers and obstacles placed at random positions. Unless otherwise specified, the arena's width and height are both `16` tiles.
 
-A robot, represented by a triangle, moves around the arena following a **spiral algorithm** of my own design.
+A robot, represented by a triangle, moves around the arena following a **spiral algorithm** of *my own design*.
 
 ### Spiral Algorithm - How it Works:
 - The robot moves forward until it reaches the edge of the arena or hits an obstacle
@@ -96,11 +96,13 @@ First, compile the program and run it with default settings:
 gcc -Wall -Werror src/*.c lib/graphics.c -Iinclude -o robot-prog.out -lm
 ./robot-prog.out | java -jar drawapp-4.5.jar
 ```
+
 Then, experiment with different arena sizes and starting positions (no need to recompile):
 ```bash
 ./robot-prog.out <width> <height> | java -jar drawapp-4.5.jar
 ./robot-prog.out <width> <height> <row> <col> <direction> | java -jar drawapp-4.5.jar
 ```
+
 Then, in `config.c`, change the number of markers and number of obstacles in lines `21` and `24`:
 ```c
 const unsigned int numObstacles = <change this>;
@@ -113,6 +115,7 @@ Recompile and run.
 gcc -Wall -Werror src/*.c lib/graphics.c -Iinclude -o robot-prog.out -lm
 ./robot-prog.out | java -jar drawapp-4.5.jar
 ```
+
 Then, try a segmented arena with a wall between two parts. In `config.c`, change the obstacle formation and number of obstacles in lines `18` and `19`:
 ```c
 const ObstacleFormation obstacleFormation = O_WALL;
@@ -122,7 +125,7 @@ Recompile and run, as before.
 
 Then, try an arena with a *central cavern*/a circular area in the middle which is more awkward for the robot to navigate. In `config.c`, change the obstacle formation and set the number of obstacles in lines `20` and `21`:
 ```c
-const ObstacleFormation obstacleFormation = O_WALL;
+const ObstacleFormation obstacleFormation = O_CAVERN;
 const unsigned int numObstacles = 0; // unnecessary change but good practice to set to 0
 ```
 Recompile and run, as before.
@@ -135,11 +138,20 @@ Then run with different size arenas, such as:
 ./robot-prog.out 100 200 10 10 south | java -jar drawapp-4.5.jar # defaults to max size
 ```
 
+Then, test the hardest configuration for the robot to navigate: a cavern with random obstacles.
+In `config.c`, change the obstacle formation and set the number of obstacles in lines `20` and `21`:
+```c
+const ObstacleFormation obstacleFormation = O_CAVERN_RANDOM;
+const unsigned int numObstacles = 6; // values around 6 to 24 usually work for a 16x16 grid
+```
+
+Recompile and run, as before. Because of the much more awkward shape, the robot may have to backtrack a long way to find a tile. There's also a higher chance that a tile is surrounded by obstacles, which the program identifies and once having backtracked to the start, the program stops.
+
 Feel free to try other things that I've not mentioned by altering values in `config.c` and on the command line.
 
 ## Program Structure Overview
 
-Purpose of each `.c` file:
+### Purpose of each `.c` file:
 - `main.c` - calls all other functions to setup the robot and arena, to find the markers using the spiral algorithm and to free memory
 - `arena.c` - generates and stores information about the arena, obstacles and markers
 - `robot.c` - functions used by the robot to move around the arena, sense things in the arena and remember where it has been and what tiles are blocked by obstacles

@@ -290,7 +290,7 @@ Coord backtrack_path_tile(Robot *robot)
     pop(robot->path);
     Coord result = peek(robot->path);
     if (result.x == -1 && result.y == -1) { // backtracked to the start and could not find tile
-        fprintf(stderr, "A marker is unreachable. Program will stop.\n");
+        fprintf(stderr, "One or more markers are unreachable. Program will stop.\n");
         exit(EXIT_FAILURE);
     }
     return result;
