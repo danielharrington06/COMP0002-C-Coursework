@@ -15,10 +15,10 @@ const int MAX_WINDOW_WIDTH = 1600;
 const int MAX_WINDOW_HEIGHT = 800;
 
 // meant to be changed between program compilations
-const int TIME_INTERVAL = 30;
+const int TIME_INTERVAL = 60;
 
-const ObstacleFormation obstacleFormation = O_CAVERN_RANDOM; // O_NONE, O_RANDOM, O_WALL, O_CAVERN
-const unsigned int numObstacles = 24; // has no impact when O_CAVERN, also must be less than 1/3 number of tiles in grid, does not matter when O_CAVERN
+const ObstacleFormation obstacleFormation = O_RANDOM; // O_NONE, O_RANDOM, O_WALL, O_CAVERN
+const unsigned int numObstacles = 12; // has no impact when O_CAVERN, also must be less than 1/3 number of tiles in grid, does not matter when O_CAVERN
 
 const MarkerFormation markerFormation = M_RANDOM; // M_EDGE, M_RANDOM
-const unsigned int numMarkers = 24; // must be less than 2/3 number of tiles in grid
+const unsigned int numMarkers = 8; // must be less than 2/3 number of tiles in grid

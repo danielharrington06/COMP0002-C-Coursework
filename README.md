@@ -90,7 +90,7 @@ If the direction is invalid, a random direction is chosen, but the position kept
 
 At any point, if the program is moving too quickly or slowly, line `18` in `config.c` (which represents the miliseconds between each frame) should be adjusted.
 ```c
-const int TIME_INTERVAL = <miliseconds>; // 20 for very big arenas, 50 for medium, 100 for observing the robot's movement and how it works
+const int TIME_INTERVAL = <miliseconds>; // 20 for very big arenas, 60 for medium, 100 for observing the robot's movement and how it works
 ```
 
 First, compile the program and run it with default settings:
