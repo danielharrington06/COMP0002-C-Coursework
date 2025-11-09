@@ -19,7 +19,7 @@ void check_obstacle_marker_values(Arena *arena, ObstacleFormation of, int numObs
         fprintf(stderr, "Obstacle formation is cavern and marker formation is edge which is incompatible\n");
         exit(EXIT_FAILURE);
     }
-    if (numObstacles > (arena->arenaWidth * arena->arenaHeight)/3) {
+    if (numObstacles > (arena->arenaWidth * arena->arenaHeight)/3 && of != O_CAVERN) {
         fprintf(stderr, "Number of obstacles: %d exceeds 1/3 number of tiles: %d\n", numObstacles, (arena->arenaWidth * arena->arenaHeight)/3);
         exit(EXIT_FAILURE);
     }
