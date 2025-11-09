@@ -44,7 +44,7 @@ static void draw_border(Arena *arena)
     fillRect(BORDER_THICKNESS, BORDER_THICKNESS, WINDOW_WIDTH-2*BORDER_THICKNESS, WINDOW_HEIGHT-2*BORDER_THICKNESS);
 }
 
-// this function draws the black grid across the screen
+// this function draws the black grid across the screen of width 2
 static void draw_grid(Arena *arena)
 {
     setColour(black);
