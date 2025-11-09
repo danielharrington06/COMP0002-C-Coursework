@@ -176,3 +176,4 @@ The code enforces limits on the number of obstacles and markers that can be plac
 - I did **not** use generative AI to produce any source code used for this coursework
 - The spiral algorithm is an algorithm I thought up completely of my own design, **without** the use of AI nor other internet sources
 - I did use Copilot and ChatGPT to understand and improve my understanding of how pointers and structs work before we had covered them in lectures
+- While they are certainly not necessary, I have included a comment above each function definition as this pops up when I use the function and may give more information about the function
