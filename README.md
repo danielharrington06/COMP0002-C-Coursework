@@ -8,7 +8,7 @@ The program displays a tile-based arena with markers and obstacles placed at ran
 
 A robot, represented by a triangle, moves around the arena following a **spiral algorithm** of my own design.
 
-**Spiral Algorithm** - How it Works:
+### Spiral Algorithm - How it Works:
 - The robot moves forward until it reaches the edge of the arena or an obstacle
 - It stores where it has visited in its memory, its own understanding of the arena grid
 - Once reaching the edge of the arena or an obstacle, it spirals around, keeping the tiles it knows (visited tiles and obstacles) on its left
