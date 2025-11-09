@@ -288,7 +288,12 @@ void push_pos_to_path(Robot *robot)
 Coord backtrack_path_tile(Robot *robot)
 {
     pop(robot->path);
-    return peek(robot->path);
+    Coord result = peek(robot->path);
+    if (result.x == -1 && result.y == -1) { // backtracked to the start and could not find tile
+        fprintf(stderr, "A marker is unreachable. Program will stop.\n");
+        exit(EXIT_FAILURE);
+    }
+    return result;
 }
 
 // functions for placing the robot at the start of the program

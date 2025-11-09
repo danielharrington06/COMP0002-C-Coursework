@@ -22,7 +22,8 @@ typedef enum {
     O_NONE = 0,
     O_RANDOM = 1,
     O_WALL = 2,
-    O_CAVERN = 3
+    O_CAVERN = 3,
+    O_CAVERN_RANDOM = 4
 } ObstacleFormation;
 
 typedef enum {

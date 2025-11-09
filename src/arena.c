@@ -99,6 +99,10 @@ void generate_obstacles(Arena *arena, int numObstacles, ObstacleFormation format
         case O_CAVERN:
             generate_obstacles_cavern(arena);
             break;
+        case O_CAVERN_RANDOM:
+            generate_obstacles_cavern(arena);
+            generate_obstacles_random(arena, numObstacles);
+            break;
     }
 }
 
