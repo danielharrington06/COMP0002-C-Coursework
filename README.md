@@ -1,4 +1,4 @@
-# COMP0002 C Coursework
+# Spiral Search Robot Simulation
 
 It is recommended that this `.md` file is viewed in *Preview* mode rather than viewing the source code. Please read the this file in its entirety before looking at the program.
 
