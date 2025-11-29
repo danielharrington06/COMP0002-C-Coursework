@@ -2,8 +2,6 @@
 
 It is recommended that this `.md` file is viewed in *Preview* mode rather than viewing the source code. Please read the this file in its entirety before looking at the program.
 
-Videos of the code working can be found under `example-media/`.
-
 ## Description
 
 This program implements a robot simulation and drawing system using C and the provided drawing library (`graphics.c`, `graphics.h` and `drawapp-4.5.jar`). 
