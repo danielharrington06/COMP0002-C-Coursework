@@ -1,1 +1,0 @@
-this is here just so the example-media folder is seen by git
